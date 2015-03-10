@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="190dp"
+    android:layout_height="122dp"
+    android:background="@android:color/black"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="4dp"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="top|center"
+            android:gravity="center"
+            android:src="@drawable/ic_image" />
+
+        <TextView
+            android:id="@+id/dialogAttachPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="top|center"
+            android:gravity="center"
+            android:text="Attach Photo"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/citySelectTitleSize" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@android:color/white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="4dp"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="top|center"
+            android:gravity="center"
+            android:src="@drawable/ic_audio_track" />
+
+        <TextView
+            android:id="@+id/dialogAttachAudio"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="top|center"
+            android:gravity="center"
+            android:text="Attach Audio"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/citySelectTitleSize" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@android:color/white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="4dp"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="top|center"
+            android:gravity="center"
+            android:src="@drawable/ic_voice_note" />
+
+        <TextView
+            android:id="@+id/dialogAttachVoice"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="top|center"
+            android:gravity="center"
+            android:text="Attach Recording"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/citySelectTitleSize" />
+    </LinearLayout>
+
+</LinearLayout>

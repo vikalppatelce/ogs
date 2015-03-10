@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app"
+    android:orientation="vertical" >
+
+    <include layout="@layout/action_bar_photo" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/media_settings_header"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/settings_heading_text_size" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/white" />
+
+            <CheckBox
+                android:id="@+id/settingsGalleryCB"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:button="@null"
+                android:checked="false"
+                android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                android:paddingLeft="10dp"
+                android:text="@string/media_settings_gallery"
+                android:textColor="@android:color/white" />
+
+            <CheckBox
+                android:id="@+id/settingsPlayerCB"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:button="@null"
+                android:checked="true"
+                android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                android:paddingLeft="10dp"
+                android:text="@string/media_settings_player"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

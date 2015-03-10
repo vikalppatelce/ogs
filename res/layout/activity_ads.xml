@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app" >
+
+    <include layout="@layout/actionbar_ttlogs_ads" />
+
+    <ImageView
+        android:id="@+id/activityAdsSmallImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/actionbar_height"
+        android:scaleType="centerInside"
+        android:src="@drawable/ads_small"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/activityAdsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/actionbar_height"
+        android:paddingTop="20dp"
+        android:text="TTOGS"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/activityAdsFullImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_below="@id/activityAdsSmallImageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="110dp"
+        android:scaleType="centerInside" />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="110dp"
+        android:layout_below="@id/activityAdsSmallImageView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        ads:adSize="MEDIUM_RECTANGLE"
+        ads:adUnitId="@string/banner_ad_unit_id"
+        android:visibility="gone" />
+
+</RelativeLayout>

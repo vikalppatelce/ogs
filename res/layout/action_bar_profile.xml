@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/actionbar_height"
+    android:background="@drawable/ab_solid_example"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/actionBarDrawer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="16dp"
+        android:src="@drawable/ic_ab_back"
+        android:scaleType="centerInside" />
+
+    <TextView
+        android:id="@+id/actionBarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="Update"
+        android:layout_marginRight="8dp"
+        android:layout_centerVertical="true"
+        android:drawablePadding="7dp"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:drawableLeft="@drawable/selectphoto_large"
+        android:textColor="@android:color/white" />
+
+</RelativeLayout>

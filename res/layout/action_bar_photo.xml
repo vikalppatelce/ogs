@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/actionbar_height"
+    android:background="@drawable/ab_solid_example"
+    android:id="@+id/actionBarLayout"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/actionBarDrawer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_back"
+        android:scaleType="centerInside" />
+
+    <TextView
+        android:id="@+id/actionBarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="TTLOGS"
+        android:textSize="@dimen/actionBarTitleTextSize"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/actionBarBackArrowOnRight"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:layout_marginRight="7dp"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:text="00:00am"
+        android:textColor="@android:color/white"
+        />
+
+</RelativeLayout>

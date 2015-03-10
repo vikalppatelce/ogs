@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="transparent">#2A000000</color>
+    <color name="background_tab_pressed">#6633B5E5</color>
+    <color name="background_actionbar">#006999</color>
+    <color name="background_feed">#D3D6DB</color>
+    <color name="red">#FF0000</color>
+    <color name="green">#22BF64</color>
+    <color name="background_feed_actions">#F0F0F0</color>
+    <color name="default_progress_bar_color">#FF33B5E5</color>
+    <color name="rippelColor">#0099CC</color>
+    <color name="light_gray">#c2c7cc</color>
+    <color name="dark_gray">#3d454c</color>
+    <color name="dark_gray_pressed">#373e44</color>
+    <color name="darker_gray">#1f2226</color>
+    <color name="gradient_startColor">#B6E6FC</color>
+    <color name="gradient_endColor">#B6E6FC</color>
+    <color name="gradient_middleColor">#DDF3FE</color>
+    <color name="backround_actionbar_ttlogs">#F87654</color>
+    <color name="chat_bubble_left">#FFD001</color>
+    <color name="chat_user_left">#00AD00</color>
+    <color name="chat_enter_background">#F3F3F3</color>
+    <color name="chat_bubble_right">#FC4267</color>
+    <color name="registration_text">#DECBE9</color>
+
+</resources>

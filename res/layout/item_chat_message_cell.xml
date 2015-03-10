@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sinleMessageContainerParent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/chatDateDivider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        android:orientation="horizontal" >
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@android:color/white" />
+
+        <TextView
+            android:id="@+id/chatDateDividerText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginRight="2dp"
+            android:layout_weight="1"
+            android:textColor="@android:color/white" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@android:color/white" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/singleMessageContainerLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@id/chatDateDivider"
+        android:layout_marginRight="40dp"
+        android:background="@drawable/shape_chat_left"
+        android:minWidth="@dimen/item_chat_minimum_width"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:id="@+id/singleMessageUserContainerLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/singleMessageUserLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center"
+                android:layout_marginLeft="3dp"
+                android:gravity="left|center"
+                android:text="user"
+                android:textColor="@color/green"
+                android:textSize="@dimen/item_chat_user_text" />
+
+            <TextView
+                android:id="@+id/singleMessageTextLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center"
+                android:layout_marginLeft="7dp"
+                android:layout_marginRight="7dp"
+                android:gravity="left|center"
+                android:textSize="@dimen/item_chat_user_message" />
+
+            <TextView
+                android:id="@+id/singleMessageUserTimeLeft"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center"
+                android:layout_marginRight="3dp"
+                android:gravity="right|center"
+                android:minWidth="@dimen/item_chat_minimum_width"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/item_chat_user_time" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/singleMessageContainerRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/shape_chat_right"
+        android:minWidth="@dimen/item_chat_minimum_width"
+        android:layout_below="@id/chatDateDivider"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:id="@+id/singleMessageUserContainerRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/singleMessageUserRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center"
+                android:layout_marginLeft="3dp"
+                android:gravity="left|center"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/item_chat_user_text" />
+
+            <TextView
+                android:id="@+id/singleMessageTextRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center"
+                android:layout_marginLeft="7dp"
+                android:layout_marginRight="7dp"
+                android:gravity="left|center"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/item_chat_user_message" />
+
+            <TextView
+                android:id="@+id/singleMessageUserTimeRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center"
+                android:layout_marginRight="3dp"
+                android:gravity="right|center"
+                android:minWidth="@dimen/item_chat_minimum_width"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/item_chat_user_time" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

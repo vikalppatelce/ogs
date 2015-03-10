@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ripple="http://schemas.android.com/apk/res-auto"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <com.application.ui.view.RippleBackground
+        android:id="@+id/rippleBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        ripple:rb_color="#006999"
+        ripple:rb_duration="4000"
+        ripple:rb_radius="48dp"
+        ripple:rb_rippleAmount="4"
+        ripple:rb_scale="2"
+        ripple:rb_strokeWidth="2dp"
+        ripple:rb_type="fillRipple" />
+    
+<!--     <com.application.ui.view.RippleBackground -->
+<!--         android:id="@+id/rippleBackground" -->
+<!--         android:layout_width="match_parent" -->
+<!--         android:layout_height="match_parent" -->
+<!--         android:layout_centerInParent="true" -->
+<!--         ripple:rb_color="#006999" -->
+<!--         ripple:rb_duration="3000" -->
+<!--         ripple:rb_radius="32dp" -->
+<!--         ripple:rb_rippleAmount="6" -->
+<!--         ripple:rb_scale="6"/> -->
+
+    <com.application.ui.view.ButtonFloat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="48dp"
+        android:background="#1E88E5"
+        android:text="Show Location"
+        android:visibility="gone"
+        materialdesign:animate="true"
+        materialdesign:iconDrawable="@android:drawable/ic_menu_add" />
+
+    <Button
+        android:id="@+id/activity_attendance_btn_fetch_location"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="48dp"
+        android:background="@drawable/shape_round"
+        android:text="Show Location"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/activity_attendance_btn_fetch_location_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="48dp"
+        android:text="Show Location"
+        android:textColor="@android:color/white"
+        android:visibility="gone" />
+
+</RelativeLayout>

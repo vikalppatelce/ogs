@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:orientation="vertical" >
+
+    <include layout="@layout/action_bar_photo" />
+
+    <com.application.ui.view.TouchImageView
+        android:id="@+id/activityPhotoViewerImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_launcher"
+        />
+
+</LinearLayout>

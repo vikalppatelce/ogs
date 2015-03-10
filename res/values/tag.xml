@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <item name="TAG_CITY_ID" type="id"/>
+        <item name="TAG_CITY_NAME" type="id"/>
+        <item name="TAG_CITY_ACTIVE" type="id"/>
+        <item name="TAG_GROUP_ID" type="id"/>
+        <item name="TAG_GROUP_NAME" type="id"/>
+        <item name="TAG_GROUP_JABBER_ID" type="id"/>
+        <item name="TAG_GROUP_CITY_ID" type="id"/>
+        <item name="TAG_GROUP_ACTIVE" type="id"/>
+        <item name="TAG_IS_PLAY" type="id"/>
+        <item name="TAG_USER_ID" type="id"/>
+        <item name="TAG_NAME" type="id"/>
+</resources>

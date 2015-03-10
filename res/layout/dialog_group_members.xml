@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:circeImageView="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backround_actionbar_ttlogs"
+    android:minHeight="320dp"
+    android:minWidth="240dp"
+    android:orientation="vertical" >
+
+    <FrameLayout
+        android:id="@+id/MemberInfoContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/backround_actionbar_ttlogs" >
+
+        <LinearLayout
+            android:id="@+id/MemberInfoContainerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <ListView
+                android:id="@+id/membersListView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/MemberInfoContainerProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="visible" />
+    </FrameLayout>
+
+</LinearLayout>

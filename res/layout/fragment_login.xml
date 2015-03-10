@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/userName"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="14dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_edit_bg"
+            android:gravity="left|center"
+            android:hint="Username"
+            android:inputType="text"
+            android:paddingBottom="3dp"
+            android:paddingLeft="7dp"
+            android:paddingTop="3dp" />
+        <EditText
+            android:id="@+id/passWord"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="14dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_edit_bg"
+            android:gravity="left|center"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:paddingBottom="3dp"
+            android:paddingLeft="7dp"
+            android:paddingTop="3dp" />
+
+        <Button
+            android:id="@+id/logInBtn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/shape_rectangle_button"
+            android:text="Log In"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+        
+         <Button
+            android:id="@+id/registerBtn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/shape_rectangle_button"
+            android:text="Register?"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</ScrollView>

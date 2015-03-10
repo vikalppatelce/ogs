@@ -1,0 +1,44 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <com.application.ui.view.PagerSlidingTabStrip
+                android:id="@+id/pager_sliding_tab_strip"
+                android:layout_width="fill_parent"
+                android:layout_height="48dip"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/background_tabs"
+                app:pstsIndicatorColor="@color/background_actionbar"
+                app:pstsTabPaddingLeftRight="14dip" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/pager"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp" >
+            </android.support.v4.view.ViewPager>
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/left_drawer"
+            android:layout_width="270dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="#006999"
+            android:choiceMode="singleChoice"
+            android:drawSelectorOnTop="true"
+            android:fadingEdge="none" />
+    </android.support.v4.widget.DrawerLayout>
+
+</RelativeLayout>
