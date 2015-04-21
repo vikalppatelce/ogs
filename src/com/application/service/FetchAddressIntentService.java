@@ -16,7 +16,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.application.utils.AppConstants;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 
 /**
  * Asynchronously handles an intent using a worker thread. Receives a ResultReceiver object and a

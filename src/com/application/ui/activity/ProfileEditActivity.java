@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -47,7 +48,7 @@ import com.application.utils.ImageCompression;
 import com.application.utils.RequestBuilder;
 import com.application.utils.RestClient;
 import com.application.utils.Utilities;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.flurry.android.FlurryAgent;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -170,7 +171,7 @@ public class ProfileEditActivity extends ActionBarActivity {
 			mUserNameTv.setText(ApplicationLoader.getPreferences()
 					.getDisplayName());
 			mEndDate.setText(ApplicationLoader.getPreferences().getEndTime());
-			if(BuildVars.DEBUGGING_PURPOSE){
+			if(BuildVars.DEBUGGING_XMPP){
 				mJabberLayout.setVisibility(View.VISIBLE);
 				mJabber.setText(ApplicationLoader.getPreferences().getJabberId());
 				showRoomsJoin();
@@ -518,6 +519,15 @@ public class ProfileEditActivity extends ActionBarActivity {
 			mProgressDialog.show();
 		}
 		
+	}
+	
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            return true;
+	    }
+	    return super.onKeyDown(keycode, e);
 	}
 
 	/*

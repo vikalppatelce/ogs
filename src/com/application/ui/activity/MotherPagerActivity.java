@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,7 @@ import com.application.ui.view.DrawerArrowDrawable;
 import com.application.ui.view.PagerSlidingTabStrip;
 import com.application.ui.view.ViewPagerAdapter;
 import com.application.utils.BuildVars;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.flurry.android.FlurryAgent;
 
 public class MotherPagerActivity extends ActionBarActivity {
@@ -314,6 +315,15 @@ public class MotherPagerActivity extends ActionBarActivity {
 			}
 			return rowView;
 		}
+	}
+	
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            return true;
+	    }
+	    return super.onKeyDown(keycode, e);
 	}
 	
 	/*

@@ -15,15 +15,20 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -47,7 +52,7 @@ import com.application.utils.BuildVars;
 import com.application.utils.RequestBuilder;
 import com.application.utils.RestClient;
 import com.application.utils.Utilities;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
@@ -456,7 +461,7 @@ public class ChatAdapter extends BaseFragmentAdapter {
 				mSingleMessageUserTimeRight, mChatDateLayout, mChatDateTv);
 	}
 
-	public void setMessageObject(MessageObject messageObj, MessageObject messageObjLast,
+	public void setMessageObject(final MessageObject messageObj, MessageObject messageObjLast,
 			RelativeLayout mSingleMessageContainerLeft,
 			RelativeLayout mSingleMessageContainerRight,
 			TextView mSingleMessageTextLeft, TextView mSingleMessageTextRight,
@@ -484,6 +489,22 @@ public class ChatAdapter extends BaseFragmentAdapter {
 			mChatDateLayout.setVisibility(View.VISIBLE);
 			mChatDateTv.setText(messageObj.getMessageDate());
 		}
+		
+		mSingleMessageTextRight.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				showCopyInfo(messageObj,0);
+			}
+		});
+		
+		mSingleMessageTextLeft.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				showCopyInfo(messageObj,0);
+			}
+		});
 	}
 	
 	public void setMessageObjectImage(final MessageObject messageObj,
@@ -901,6 +922,47 @@ public class ChatAdapter extends BaseFragmentAdapter {
 
 		mDialog.show();
 	}
+	
+	
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB) public void showCopyInfo(final MessageObject messageObject, final int type) {
+		final Dialog mDialog = new Dialog(mContext);
+		mDialog.setCancelable(true);
+		mDialog.setCanceledOnTouchOutside(true);
+		mDialog.setTitle(messageObject.getUserId());
+		mDialog.setContentView(R.layout.dialog_copy);
+		Window dialogWindow = mDialog.getWindow();
+		WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+		dialogWindow.setGravity(Gravity.CLIP_VERTICAL);
+		dialogWindow.setAttributes(lp);
+
+		TextView mDialogCopyTv = (TextView) mDialog
+				.findViewById(R.id.dialogCopy);
+		
+		mDialogCopyTv.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				// TODO Auto-generated method stub : Dial User Number
+				try{
+					switch(type){
+					case 0:
+						if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB){
+						     android.content.ClipboardManager clipboard =  (android.content.ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE); 
+						        ClipData clip = ClipData.newPlainText("clipboard_copy", messageObject.getMessageText());
+						        clipboard.setPrimaryClip(clip); 
+						} else{
+						    android.text.ClipboardManager clipboard = (android.text.ClipboardManager)mContext.getSystemService(Context.CLIPBOARD_SERVICE); 
+						    clipboard.setText(messageObject.getMessageText());
+						}
+						break;
+					}
+					mDialog.dismiss();
+				}catch(Exception e){
+					
+				}
+			}
+		});
+		mDialog.show();
+	}
 
 	public class AsyncTaskShowUserInfo extends AsyncTask<Void, Void, Void> {
 
@@ -942,6 +1004,8 @@ public class ChatAdapter extends BaseFragmentAdapter {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				isResonseFromApi = false;
+			} catch(Exception e){
+				e.printStackTrace();
 			}
 			return null;
 		}
@@ -967,6 +1031,14 @@ public class ChatAdapter extends BaseFragmentAdapter {
 						mDialogNameTv.setText(mJSONObjectDataInfo.getString("display_name"));
 						mDialogCityTv.setText(mJSONObjectDataInfo.getString("email"));	
 						mImageLoader.displayImage(mJSONObjectDataInfo.getString("user_image_path"), mDialogImage);
+						
+						try{
+							SpannableString content = new SpannableString(mDialogMobileTv.getText().toString());
+							content.setSpan(new UnderlineSpan(), 0, mDialogMobileTv.getText().toString().length(), 0);
+							mDialogMobileTv.setText(content);
+						}catch(Exception e){
+							Log.i(TAG, e.toString());
+						}
 					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block

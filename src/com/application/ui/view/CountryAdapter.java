@@ -42,9 +42,8 @@ public class CountryAdapter extends BaseSectionsAdapter {
 		try {
 
 			JSONObject mJSONObject = new JSONObject(mResponseFromApi);
-			JSONObject mJSONObjectInner = mJSONObject.getJSONObject("data");
 			if(isCity){
-				JSONArray mJSONArray = mJSONObjectInner.getJSONArray("cities");
+				JSONArray mJSONArray = mJSONObject.getJSONArray("cities");
 				for (int i = 0; i < mJSONArray.length(); i++) {
 					JSONObject mJSONInnerObj = mJSONArray.getJSONObject(i);
 					Country c = new Country();
@@ -61,6 +60,7 @@ public class CountryAdapter extends BaseSectionsAdapter {
 					arr.add(c);
 				}
 			}else{
+				JSONObject mJSONObjectInner = mJSONObject.getJSONObject("data");
 				JSONArray mJSONArray = mJSONObjectInner.getJSONArray("groups");
 				for (int i = 0; i < mJSONArray.length(); i++) {
 					JSONObject mJSONInnerObj = mJSONArray.getJSONObject(i);

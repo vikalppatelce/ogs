@@ -44,7 +44,7 @@ import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 
 @SuppressLint("NewApi") public class AndroidUtilities {
 

@@ -142,7 +142,7 @@ public class CountrySearchAdapter extends BaseFragmentAdapter {
         }
 
         Country c = searchResult.get(i);
-        ((TextSettingsCell) view).setTextAndValue(c.name, "+" + c.code, i != searchResult.size() - 1);
+        ((TextSettingsCell) view).setTextAndValue(c.name, ""/*"+" + c.code*/, i != searchResult.size() - 1);
 
         return view;
     }

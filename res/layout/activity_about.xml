@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app"
+    android:orientation="vertical" >
+
+    <include layout="@layout/actionbar_ttlogs_ads" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/actionbar_height"
+        android:layout_height="wrap_content" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <WebView
+                android:id="@+id/webView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:background="@android:color/transparent"
+                android:layerType="software" />
+
+            <WebView
+                android:id="@+id/webView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/webView"
+                android:layout_centerInParent="true"
+                android:background="@android:color/transparent"
+                android:layerType="software" />
+
+            <!-- <TextView -->
+            <!-- android:id="@+id/aboutText" -->
+            <!-- android:layout_below="@id/webView" -->
+            <!-- android:layout_width="wrap_content" -->
+            <!-- android:layout_height="wrap_content" -->
+            <!-- android:layout_margin="20dp" -->
+            <!-- android:scaleType="centerInside" -->
+            <!-- android:textColor="@android:color/white" /> -->
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

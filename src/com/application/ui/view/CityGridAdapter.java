@@ -17,7 +17,7 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.application.beans.City;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 
 /**
  * @author Vikalp Patel(VikalpPatelCE)

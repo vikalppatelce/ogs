@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.application.ui.view.PagerSlidingTabStrip;
 import com.application.ui.view.ViewPagerAdapterText;
 

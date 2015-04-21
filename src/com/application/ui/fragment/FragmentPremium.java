@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 
 public class FragmentPremium extends Fragment {
 	@Override

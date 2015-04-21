@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backround_actionbar_ttlogs"
-    android:minHeight="300dp"
+    android:minHeight="320dp"
     android:minWidth="240dp"
     android:orientation="vertical" >
 
     <FrameLayout
         android:id="@+id/userInfoContainer"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="320dp"
         android:background="@color/backround_actionbar_ttlogs" >
 
         <LinearLayout
@@ -57,7 +57,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:textColor="@android:color/white"
+                android:textColor="#0000FF"
                 android:textSize="18sp" />
             
             <TextView

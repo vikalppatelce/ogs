@@ -30,7 +30,7 @@ import com.application.ui.fragment.FragmentAttendance;
 import com.application.ui.fragment.FragmentLead;
 import com.application.ui.fragment.FragmentPremium;
 import com.application.ui.view.PagerSlidingTabStrip.IconTabProvider;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 
 /**
  * @author Vikalp Patel (vikalppatelce@yahoo.com)

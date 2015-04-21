@@ -45,6 +45,7 @@ import com.application.beans.MessageObject;
 import com.application.ui.activity.CitySelectActivity;
 import com.application.ui.activity.GroupChatActivity;
 import com.application.ui.activity.GroupSelectActivity;
+import com.application.ui.view.Crouton;
 import com.application.utils.AppConstants;
 import com.application.utils.ApplicationLoader;
 import com.application.utils.BadgeUtils;
@@ -52,7 +53,7 @@ import com.application.utils.BuildVars;
 import com.application.utils.DBConstant;
 import com.application.utils.RequestBuilder;
 import com.application.utils.Utilities;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 
 public class ConnectionsManager {
 	private static final String TAG = ConnectionsManager.class.getSimpleName();
@@ -237,6 +238,35 @@ public class ConnectionsManager {
 					.getApplicationContext());*/
 		}
 	}
+	
+	public boolean isXMPPConnected(){
+		try{
+			if(Utilities.isInternetConnected()){
+				if(mXMPPConnection!=null){
+					if(BuildVars.DEBUGGING_PURPOSE){
+						showDebugConnections(BuildVars.DEBUG_LOGGED_IN);
+					}
+					if(mXMPPConnection.isConnected()){
+						if(BuildVars.DEBUGGING_PURPOSE){
+							showDebugConnections(BuildVars.DEBUG_CONNECTED);
+						}
+						return true;
+					}
+				}else{
+					if(BuildVars.DEBUGGING_PURPOSE){
+						showDebugConnections(BuildVars.DEBUG_LOGGING_IN);
+					}
+					return false;
+				}
+			}
+			return false;
+		}catch(Exception e){
+			if(BuildVars.DEBUGGING_PURPOSE){
+				showDebugConnections(BuildVars.DEBUG_LOGGING_IN);
+			}
+			return false;
+		}
+	}
 
 	public void pushMessage(final String mGroupJabberId, final String message,
 			final int messageType, final String messageTime,
@@ -387,7 +417,7 @@ public class ConnectionsManager {
 			ComponentName componentInfo = taskInfo.get(0).topActivity;
 			// if app is running
 			if (componentInfo.getPackageName().equalsIgnoreCase(ApplicationLoader.getApplication().getResources()
-									.getString(com.digitattva.ttogs.R.string.package_name))) {
+									.getString(com.chat.ttogs.R.string.package_name))) {
 				ApplicationLoader.getApplication().getApplicationContext().sendBroadcast(mIntent);
 			}
 		} catch (Exception e) {
@@ -476,7 +506,7 @@ public class ConnectionsManager {
 			ComponentName componentInfo = taskInfo.get(0).topActivity;
 			// if app is running
 			if (componentInfo.getPackageName().equalsIgnoreCase(ApplicationLoader.getApplication().getResources()
-									.getString(com.digitattva.ttogs.R.string.package_name))) {
+									.getString(com.chat.ttogs.R.string.package_name))) {
 				ApplicationLoader.getApplication().getApplicationContext().sendBroadcast(mIntent);
 			} else {
 				generateNotification(ApplicationLoader.getApplication()
@@ -532,8 +562,10 @@ public class ConnectionsManager {
 				mContext).setSmallIcon(R.drawable.ic_notification_icon)
 //				.setContentTitle(mFromGroup + " : " + mFromUser)
 				.setContentTitle(mGroupName)
-				.setTicker(mFromUser+" : "+mMessageText)
-				.setContentText(mFromUser+" : "+mMessageText);
+//				.setTicker(mFromUser+" : "+mMessageText)
+//				.setContentText(mFromUser+" : "+mMessageText);
+		.setTicker(mFromUser+" @ "+ mGroupName+" : "+mMessageText)
+		.setContentText(mFromUser+" @ "+ mGroupName+" : "+mMessageText);
 		mBuilder.setDefaults(-1);
 		mBuilder.setOnlyAlertOnce(true);
 		mBuilder.setAutoCancel(true);
@@ -570,7 +602,24 @@ public class ConnectionsManager {
 					InBoxMessages obj = new InBoxMessages();
 //					obj.setmMessage(mCursor.getString(mCursor.getColumnIndex(DBConstant.Chat_Columns.COLUMN_USER_ID)) + " : "+ mCursor.getString(mCursor.getColumnIndex(DBConstant.Chat_Columns.COLUMN_MESSAGE)));
 //					obj.setmMessageGroupId(mCursor.getString(mCursor.getColumnIndex(DBConstant.Chat_Columns.COLUMN_USER_JABBER_ID)));
-					mMessageList.add(mCursor.getString(mCursor.getColumnIndex(DBConstant.Chat_Columns.COLUMN_USER_ID)) + " : "+ mCursor.getString(mCursor.getColumnIndex(DBConstant.Chat_Columns.COLUMN_MESSAGE)));
+					String mGroupNameInbox = "TTOGS";
+					try{
+						Cursor mGroupCursor = ApplicationLoader.getApplication().getContentResolver().query(DBConstant.Group_Columns.CONTENT_URI, null, DBConstant.Group_Columns.COLUMN_GROUP_JABBER_ID + "=?", new String[]{mCursor.getString(mCursor.getColumnIndex(DBConstant.Chat_Columns.COLUMN_GROUP_ID))}, null);
+						if(mGroupCursor!=null && mGroupCursor.getCount() > 0){
+							mGroupCursor.moveToFirst();
+							mGroupNameInbox = mGroupCursor.getString(mGroupCursor.getColumnIndex(DBConstant.Group_Columns.COLUMN_GROUP_NAME));
+						}
+						mGroupCursor.close();
+					}catch(Exception e){
+					}
+					
+					if(mCursor.getString(mCursor.getColumnIndex(DBConstant.Chat_Columns.COLUMN_TYPE)).equalsIgnoreCase("0")){
+						mMessageList.add(mCursor.getString(mCursor.getColumnIndex(DBConstant.Chat_Columns.COLUMN_USER_ID)) +" @ "+mGroupNameInbox +" : "+ mCursor.getString(mCursor.getColumnIndex(DBConstant.Chat_Columns.COLUMN_MESSAGE)));	
+					}else if(mCursor.getString(mCursor.getColumnIndex(DBConstant.Chat_Columns.COLUMN_TYPE)).equalsIgnoreCase("1")){
+						mMessageList.add(mCursor.getString(mCursor.getColumnIndex(DBConstant.Chat_Columns.COLUMN_USER_ID)) +" @ "+mGroupNameInbox + " : image");
+					}else if(mCursor.getString(mCursor.getColumnIndex(DBConstant.Chat_Columns.COLUMN_TYPE)).equalsIgnoreCase("2")){
+						mMessageList.add(mCursor.getString(mCursor.getColumnIndex(DBConstant.Chat_Columns.COLUMN_USER_ID)) +" @ "+mGroupNameInbox + " : audio");
+					}
 				} while (mCursor.moveToNext());
 			}
 			

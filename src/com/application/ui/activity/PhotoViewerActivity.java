@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -19,7 +20,7 @@ import android.widget.TextView;
 import com.application.beans.MessageObject;
 import com.application.ui.view.TouchImageView;
 import com.application.utils.BuildVars;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.flurry.android.FlurryAgent;
 
 /**
@@ -88,6 +89,15 @@ public class PhotoViewerActivity extends ActionBarActivity {
 				finish();
 			}
 		});
+	}
+	
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            return true;
+	    }
+	    return super.onKeyDown(keycode, e);
 	}
 	/*
 	 * Flurry Analytics

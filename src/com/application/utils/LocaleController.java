@@ -31,7 +31,7 @@ import android.content.res.Configuration;
 import android.text.format.DateFormat;
 import android.util.Xml;
 
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 
 public class LocaleController {
 

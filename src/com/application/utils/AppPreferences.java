@@ -156,12 +156,12 @@ public class AppPreferences {
 
 	public void setUserId(String str) {
 		editor = sharedPreferences.edit();
-		editor.putString("_userId", str);
+		editor.putString("_userId_", str);
 		editor.commit();
 	}
 
 	public String getUserId() {
-		String flag = sharedPreferences.getString("_userId", null);
+		String flag = sharedPreferences.getString("_userId_", null);
 		return flag;
 	}
 	
@@ -211,7 +211,7 @@ public class AppPreferences {
 	
 	public void setUserExpired(boolean str) {
 		editor = sharedPreferences.edit();
-		editor.putBoolean("_userExpired", false);
+		editor.putBoolean("_userExpired", str);
 		editor.commit();
 	}
 
@@ -326,6 +326,17 @@ public class AppPreferences {
 
 	public String getUserGroupId() {
 		String flag = sharedPreferences.getString("user_group_id", null);
+		return flag;
+	}
+	
+	public void setUserService(String str) {
+		editor = sharedPreferences.edit();
+		editor.putString("user_service", str);
+		editor.commit();
+	}
+
+	public String getUserService() {
+		String flag = sharedPreferences.getString("user_service", null);
 		return flag;
 	}
 	

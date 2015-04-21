@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
@@ -25,7 +26,7 @@ import com.application.ui.view.Crouton;
 import com.application.ui.view.Style;
 import com.application.utils.BuildVars;
 import com.application.utils.Utilities;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.flurry.android.FlurryAgent;
 
 /**
@@ -279,6 +280,15 @@ public class MediaPlayerActivity extends ActionBarActivity implements SeekBar.On
 		btnPlay.performClick();
 	}
 
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            return true;
+	    }
+	    return super.onKeyDown(keycode, e);
+	}
+	
 	/*
 	 * Flurry Analytics
 	 */

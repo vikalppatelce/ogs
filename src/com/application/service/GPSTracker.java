@@ -23,7 +23,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.application.utils.ApplicationLoader;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 
 @SuppressLint("Instantiatable") public class GPSTracker extends Service implements LocationListener {
 

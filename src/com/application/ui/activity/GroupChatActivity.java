@@ -35,9 +35,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -76,7 +80,7 @@ import com.application.utils.ImageCompression;
 import com.application.utils.RequestBuilder;
 import com.application.utils.RestClient;
 import com.application.utils.Utilities;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.flurry.android.FlurryAgent;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -198,6 +202,12 @@ public class GroupChatActivity extends ActionBarActivity {
 		registerReceiver(mBroadCastReceiverDebuggable, new IntentFilter(
 				ConnectionsManager.BROADCAST_ACTION_DEBUG));
 		ConnectionsManager.getInstance().generateBadgeNotification();
+		if(!ConnectionsManager.getInstance().isXMPPConnected()){
+			ConnectionsManager.getInstance().initPushConnection();
+			mChatSendIv.setImageDrawable(getResources().getDrawable(R.drawable.chat_send_inactive));
+		}else{
+			mChatSendIv.setImageDrawable(getResources().getDrawable(R.drawable.chat_send));
+		}
 		if (mAdView != null) {
             mAdView.resume();
         }
@@ -300,6 +310,10 @@ public class GroupChatActivity extends ActionBarActivity {
 				mChatEditText.setLayoutParams(params);
 				
 			}
+			
+			if(!mIntentFromConnectionsManager){
+				Utilities.cancelNotification(GroupChatActivity.this);
+			}
 		}catch(Exception e){
 			Log.i(TAG, e.toString());
 		}
@@ -311,7 +325,8 @@ public class GroupChatActivity extends ActionBarActivity {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				if(Utilities.isInternetConnected()){
-					if (!TextUtils.isEmpty(mChatEditText.getText().toString())) {
+					if(ConnectionsManager.getInstance().isXMPPConnected()){
+						if (!TextUtils.isEmpty(mChatEditText.getText().toString())) {
 							Utilities.searchQueue.postRunnable(new Runnable() {
 								@Override
 								public void run() {
@@ -378,6 +393,12 @@ public class GroupChatActivity extends ActionBarActivity {
 						Crouton.cancelAllCroutons();
 						Crouton.makeText(GroupChatActivity.this,
 								"Please Enter Message!", Style.ALERT).show();
+						}
+					}else{
+						Crouton.cancelAllCroutons();
+						Crouton.makeText(GroupChatActivity.this,
+								"Connection Lost", Style.ALERT).show();
+						ConnectionsManager.getInstance().initPushConnection();
 					}
 				}else{
 					Crouton.cancelAllCroutons();
@@ -590,7 +611,14 @@ public class GroupChatActivity extends ActionBarActivity {
 //				updateUICrouton(intent);
 				String mDebuggable = intent
 						.getStringExtra("debugConnections");
-					updateUIDebuggableConnections(mDebuggable);
+					if(BuildVars.DEBUGGING_XMPP){
+						updateUIDebuggableConnections(mDebuggable);	
+					}
+					if(mDebuggable.equalsIgnoreCase(BuildVars.DEBUG_CONNECTED)){
+						mChatSendIv.setImageDrawable(getResources().getDrawable(R.drawable.chat_send));
+					}else{
+						mChatSendIv.setImageDrawable(getResources().getDrawable(R.drawable.chat_send_inactive));
+					}
 			} catch (Exception e) {
 				Log.i(TAG, e.toString());
 			}
@@ -861,6 +889,8 @@ public class GroupChatActivity extends ActionBarActivity {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch(Exception e){
+				e.printStackTrace();
 			}
 			return null;
 		}
@@ -930,7 +960,8 @@ public class GroupChatActivity extends ActionBarActivity {
 							.getMilliSecondsFromData(Integer.parseInt(mArrayListBanner.get(2).getBannerEndDate().substring(0, 4)),
 									Integer.parseInt(mArrayListBanner.get(2).getBannerEndDate().substring(5, 7)),
 									Integer.parseInt( mArrayListBanner.get(2).getBannerEndDate().substring(8, 10))))*/
-						if(Utilities.isToShowBannerAds(Utilities.getSystemDateYYYYMMDD(), mArrayListBanner.get(2).getBannerStartDate(), mArrayListBanner.get(2).getBannerEndDate()))
+//						if(Utilities.isToShowBannerAds(Utilities.getSystemDateYYYYMMDD(), mArrayListBanner.get(2).getBannerStartDate(), mArrayListBanner.get(2).getBannerEndDate()))
+					if (mArrayListBanner.get(2).isBannerIsAdsOn())
 						{
 //						mImageLoader.displayImage(mArrayListBanner.get(1).getBannerImage(), chatAdsImageView);
 						if(new File(AppConstants.ADS_DIRECTORY_PATH+Utilities.getFileNameFromPath(mArrayListBanner.get(2).getBannerImage())).exists()){
@@ -1165,6 +1196,8 @@ public class GroupChatActivity extends ActionBarActivity {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}catch(Exception e){
+				e.printStackTrace();
 			}
 			return null;
 		}
@@ -1250,8 +1283,8 @@ public class GroupChatActivity extends ActionBarActivity {
 			TextView mTextView  = (TextView)rowView.findViewById(R.id.itemMembersNameTv);
 			
 			mTextView.setText(mListMember.get(position).getMemberName());
-			
-			mImageLoader.displayImage(mListMember.get(position).getMemberImage(), mCircleImageView);
+			mCircleImageView.setVisibility(View.GONE);
+//			mImageLoader.displayImage(mListMember.get(position).getMemberImage(), mCircleImageView);
 			rowView.setTag(R.id.TAG_USER_ID, mListMember.get(position).getMemberId());
 			rowView.setTag(R.id.TAG_NAME, mListMember.get(position).getMemberName());
 			return rowView;
@@ -1387,6 +1420,8 @@ public class GroupChatActivity extends ActionBarActivity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				isResonseFromApi = false;
+			}catch(Exception e){
+				e.printStackTrace();
 			}
 			return null;
 		}
@@ -1413,6 +1448,13 @@ public class GroupChatActivity extends ActionBarActivity {
 						mDialogCityTv.setText(mJSONObjectDataInfo.getString("city"));	
 						mDialogServiceTv.setText(mJSONObjectDataInfo.getString("service"));
 						mImageLoader.displayImage(mJSONObjectDataInfo.getString("user_image_path"), mDialogImage);
+						try{
+							SpannableString content = new SpannableString(mDialogMobileTv.getText().toString());
+							content.setSpan(new UnderlineSpan(), 0, mDialogMobileTv.getText().toString().length(), 0);
+							mDialogMobileTv.setText(content);
+						}catch(Exception e){
+							Log.i(TAG, e.toString());
+						}
 					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -1427,6 +1469,30 @@ public class GroupChatActivity extends ActionBarActivity {
 			super.onPreExecute();
 			mDialogProgress.setVisibility(View.VISIBLE);
 			mDialogUserLayout.setVisibility(View.GONE);
+		}
+	}
+	
+	private void addGroupTitleInDrawer(){
+		try{
+			String mGroupNames[] = Utilities.addGroupInDrawerFromDB();
+			if(mGroupNames !=null && mGroupNames.length > 0){
+				mDrawerTitles =null;
+				mDrawerDetailTitles =null;
+				mDrawerTitles = new String[4+mGroupNames.length];
+				mDrawerDetailTitles = new String[4+mGroupNames.length];
+				mDrawerTitles[0] = "Group Chat";
+				mDrawerTitles[1] = "Edit Profile";
+				mDrawerTitles[2] = "About Us";
+				mDrawerDetailTitles = mDrawerTitles;
+				
+				int j = 0;
+				for(int i = 3 ; i < (mGroupNames.length + mDrawerTitles.length +1); i++){
+					mDrawerTitles[i] = mGroupNames[j];
+					mDrawerDetailTitles[i]  = mGroupNames[j];
+					j++;
+				}
+			}
+		}catch(Exception e){
 		}
 	}
 	
@@ -1448,6 +1514,12 @@ public class GroupChatActivity extends ActionBarActivity {
 				R.array.drawer_menu_detail_array);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);
+		
+		/*
+		 * Add Group Names in Drawer
+		 */
+//		addGroupTitleInDrawer();
+		
 		mDrawerAdapter = new DrawerArrayAdapter(this, mDrawerTitles,
 				mDrawerDetailTitles);
 		mDrawerList.setAdapter(mDrawerAdapter);
@@ -1629,14 +1701,27 @@ public class GroupChatActivity extends ActionBarActivity {
 			/*case 3:
 				mDrawerProfileLayout.setVisibility(View.GONE);
 				mDrawerMenuLayout.setVisibility(View.VISIBLE);
-				mDrawerTitleView.setText(values[position]);
+				mDrawerTitleView.setText(Html.fromHtml(getResources().getString(R.string.str_activity_groups)));
 				mDrawerTitleSubView.setText(values2[position]);
 				break;*/
 			default:
+				/*mDrawerProfileLayout.setVisibility(View.GONE);
+				mDrawerMenuLayout.setVisibility(View.VISIBLE);
+				mDrawerTitleView.setText(values[position]);
+				mDrawerTitleSubView.setText(values2[position]);*/
 				break;
 			}
 			return rowView;
 		}
+	}
+	
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            return true;
+	    }
+	    return super.onKeyDown(keycode, e);
 	}
 	
 	/*

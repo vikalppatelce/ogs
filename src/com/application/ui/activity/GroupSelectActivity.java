@@ -29,10 +29,12 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,7 +72,7 @@ import com.application.utils.DBConstant;
 import com.application.utils.RequestBuilder;
 import com.application.utils.RestClient;
 import com.application.utils.Utilities;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.flurry.android.FlurryAgent;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -154,13 +156,14 @@ public class GroupSelectActivity extends ActionBarActivity {
 			} else {
 				mRetryButton.setVisibility(View.VISIBLE);
 			}
-		} else { // refreshing everytime
+		} else { // refreshing everytime : Sync Groups & City
 			addObjectsFromDB();
 			setGridViewWithData();
 			getDataFromApi(false);
 		}
-		Utilities.checkIfUserExpires(GroupSelectActivity.this);
-		Utilities.CheckAppUpdateAvailable(GroupSelectActivity.this);
+//		Utilities.checkIfUserExpires(GroupSelectActivity.this);
+//		Utilities.CheckAppUpdateAvailable(GroupSelectActivity.this);
+//		Utilities.sendDBInMail(GroupSelectActivity.this);
 	}
 	
 	@Override
@@ -176,6 +179,8 @@ public class GroupSelectActivity extends ActionBarActivity {
 			if (mAdView != null) {
                 mAdView.resume();
             }
+			Utilities.checkIfUserExpires(GroupSelectActivity.this);
+			Utilities.CheckAppUpdateAvailable(GroupSelectActivity.this);
 		}catch(Exception e){
 			Log.i(TAG, e.toString());
 		}
@@ -358,7 +363,8 @@ public class GroupSelectActivity extends ActionBarActivity {
 					obj.setGroupCityId(mIntentCityId);
 					obj.setGroupIdMySQL(mJSONObjectInner.getString("group_id"));
 					obj.setGroupName(mJSONObjectInner.getString("group_name"));
-					obj.setGroupImageLocal(AppConstants.GROUP_IMAGE_DIRECTORY_PATH+mJSONObjectInner.getString("group_id")+"_"+mIntentCityId+".jpg");
+//					obj.setGroupImageLocal(AppConstants.GROUP_IMAGE_DIRECTORY_PATH+mJSONObjectInner.getString("group_id")+"_"+mIntentCityId+".jpg");
+					obj.setGroupImageLocal(AppConstants.GROUP_IMAGE_DIRECTORY_PATH+Utilities.getFileNameFromPath(mJSONObjectInner.getString("filepath")));
 					if(BuildVars.DEBUG_VERSION){
 						obj.setGroupImagePath(mJSONObjectInner.getString("group_image_path"));
 						obj.setGroupJabberId(mJSONObjectInner.getString("group_jabber_id"));
@@ -405,8 +411,18 @@ public class GroupSelectActivity extends ActionBarActivity {
 											.get(k)
 											.getGroupId()
 											.substring(0,lastUnderScoreGroupDuplicate))) {
-							mArrayListGroup.remove(i);
+						if(mGroupListDuplicate.get(k).getGroupIsActive().equalsIgnoreCase("1")){
+							mArrayListGroup.get(i).setGroupIsActive("1");
 						}
+						
+						for (int f = 0; f < mArrayListGroup.size(); f++) {
+							if(mArrayListGroup.get(f).getGroupName().equalsIgnoreCase(mGroupListDuplicate.get(k).getGroupName())){
+								mArrayListGroup.get(f).setGroupIsActive("1");
+							}
+						}
+						
+						mArrayListGroup.remove(i);
+					}
 				}
 			}
 		}catch(Exception e){
@@ -429,6 +445,7 @@ public class GroupSelectActivity extends ActionBarActivity {
 			 int intColumnGroupActive = mCursor.getColumnIndex(DBConstant.Group_Columns.COLUMN_GROUP_IS_ACTIVE);
 			 int intColumnGroupCreated = mCursor.getColumnIndex(DBConstant.Group_Columns.COLUMN_GROUP_CREATED);
 			 int intColumnGroupImageLocal = mCursor.getColumnIndex(DBConstant.Group_Columns.COLUMN_GROUP_IMAGE_LOCAL);
+			 int intColumnGroupIdMySQL = mCursor.getColumnIndex(DBConstant.Group_Columns.COLUMN_GROUP_ID_MYSQl);
 			 do {
 				Group obj = new Group();
 				obj.setGroupId(mCursor.getString(intColumnGroupId));
@@ -440,6 +457,7 @@ public class GroupSelectActivity extends ActionBarActivity {
 				obj.setGroupImageLocal(mCursor.getString(intColumnGroupImageLocal));
 				obj.setGroupUnreadCount("0");
 				obj.setGroupIsActive(mCursor.getString(intColumnGroupActive));
+				obj.setGroupIdMySQL(mCursor.getString(intColumnGroupIdMySQL));
 				mArrayListGroup.add(obj);
 			} while (mCursor.moveToNext());
 		 }
@@ -591,16 +609,28 @@ public class GroupSelectActivity extends ActionBarActivity {
 				String groupJabberId = view.getTag(R.id.TAG_GROUP_JABBER_ID).toString();
 				String groupIsActive = view.getTag(R.id.TAG_GROUP_ACTIVE).toString();
 
-				Cursor mCursor = getContentResolver().query(DBConstant.City_Columns.CONTENT_URI, null, DBConstant.City_Columns.COLUMN_CITY_NAME+ "=?", new String[]{"All"}, null);
+				Cursor mCursor = getContentResolver().query(DBConstant.City_Columns.CONTENT_URI, null, DBConstant.City_Columns.COLUMN_CITY_NAME+ "=?" +" AND " + DBConstant.City_Columns.COLUMN_CITY_IS_ACTIVE +"=?", new String[]{"All","1"}, null);
 				if(mCursor!=null && mCursor.getCount() > 0){
-					Intent mIntent  = new Intent(GroupSelectActivity.this, GroupChatActivity.class);
-					mIntent.putExtra("notificationFromConnectionsManager", false);
-					mIntent.putExtra("notificationFromGroupId", groupId);
-					mIntent.putExtra("notificationFromGroupName", groupName);
-					mIntent.putExtra("notificationFromGroupJabberId", groupJabberId);
-					mIntent.putExtra("notificationFromCityId", groupCityId);
-					mIntent.putExtra("notificationFromCityIsActive", groupIsActive);
-					startActivity(mIntent);					
+					
+					Cursor mCursorCity = getContentResolver().query(DBConstant.City_Columns.CONTENT_URI, null, DBConstant.City_Columns.COLUMN_CITY_IS_ACTIVE + "=?", new String[]{"1"}, null);
+					if(mCursorCity!=null && mCursorCity.getCount() > 1){
+						Intent mIntent  = new Intent(GroupSelectActivity.this, CitySelectActivity.class);
+						mIntent.putExtra("notificationFromConnectionsManager", false);
+//						mIntent.putExtra("notificationFromGroupJabberId", groupJabberId);
+						mIntent.putExtra("notificationFromGroupId", groupId);
+						mIntent.putExtra("notificationFromGroupName", groupName);
+						startActivity(mIntent);		
+					}else{
+						Intent mIntent  = new Intent(GroupSelectActivity.this, GroupChatActivity.class);
+						mIntent.putExtra("notificationFromConnectionsManager", false);
+						mIntent.putExtra("notificationFromGroupId", groupId);
+						mIntent.putExtra("notificationFromGroupName", groupName);
+						mIntent.putExtra("notificationFromGroupJabberId", groupJabberId);
+						mIntent.putExtra("notificationFromCityId", groupCityId);
+						mIntent.putExtra("notificationFromCityIsActive", groupIsActive);
+						startActivity(mIntent);						
+					}
+					mCursorCity.close();
 				}else{
 					Intent mIntent  = new Intent(GroupSelectActivity.this, CitySelectActivity.class);
 					mIntent.putExtra("notificationFromConnectionsManager", false);
@@ -666,6 +696,27 @@ public class GroupSelectActivity extends ActionBarActivity {
 		}
 	}*/
 	
+	private void addDistinctGroupInDb(){
+		try{
+			for(int i = 0 ; i < mArrayListGroup.size();i++){
+				ContentValues values = new ContentValues();
+				values.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_ID, mArrayListGroup.get(i).getGroupId());
+				values.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_ID_MYSQl, mArrayListGroup.get(i).getGroupIdMySQL());
+				values.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IMAGE, mArrayListGroup.get(i).getGroupImagePath());
+				values.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IMAGE_LOCAL, mArrayListGroup.get(i).getGroupImageLocal());
+				values.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_NAME, mArrayListGroup.get(i).getGroupName());
+				values.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_ACTIVE, mArrayListGroup.get(i).getGroupIsActive());
+				values.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_JABBER_ID, mArrayListGroup.get(i).getGroupJabberId());
+				values.put(DBConstant.GroupDistinct_Columns.COLUMN_CITY_ID, mArrayListGroup.get(i).getGroupCityId());
+				values.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_UNREAD_COUNTER, mArrayListGroup.get(i).getGroupUnreadCount());
+				getContentResolver().insert(DBConstant.GroupDistinct_Columns.CONTENT_URI, values);
+			}
+		}catch(Exception e){
+			Log.i(TAG, e.toString());
+		}
+	}
+	
+	
 	
 	private void syncGroupWithDB(String mReponseFromGroupApi, String mResponseFromCityApi){
 		try{
@@ -720,8 +771,8 @@ public class GroupSelectActivity extends ActionBarActivity {
 								obj.setGroupName(mJSONObjectGroup.getString("group_name"));
 								obj.setGroupUnreadCount("0");
 								obj.setGroupIsActive("1");
-								obj.setGroupImageLocal(AppConstants.GROUP_IMAGE_DIRECTORY_PATH+mJSONObjectGroup.getString("group_id")+"_"+mIntentCityId+".jpg");
-								
+//								obj.setGroupImageLocal(AppConstants.GROUP_IMAGE_DIRECTORY_PATH+mJSONObjectGroup.getString("group_id")+"_"+mIntentCityId+".jpg");
+								obj.setGroupImageLocal(AppConstants.GROUP_IMAGE_DIRECTORY_PATH+Utilities.getFileNameFromPath(mJSONObjectGroup.getString("filepath")));
 								ContentValues values = new ContentValues();
 								values.put(DBConstant.Group_Columns.COLUMN_GROUP_ID, obj.getGroupId());
 								values.put(DBConstant.Group_Columns.COLUMN_CITY_ID, obj.getGroupCityId());
@@ -749,6 +800,18 @@ public class GroupSelectActivity extends ActionBarActivity {
 									mAdapter.notifyDataSetChanged();
 								}
 							}*/
+							 else if(checkIfGroupExistsInDBOnly(mJSONObjectGroup.getString("group_id"))){
+							 //TO DO : UPDATE GROUP NAME AND IMAGE PATH
+								 try{
+									ContentValues values = new ContentValues();
+									values.put(DBConstant.Group_Columns.COLUMN_GROUP_NAME, mJSONObjectGroup.getString("group_name"));
+									values.put(DBConstant.Group_Columns.COLUMN_GROUP_IMAGE_LOCAL, AppConstants.GROUP_IMAGE_DIRECTORY_PATH+Utilities.getFileNameFromPath(mJSONObjectGroup.getString("filepath")));
+									values.put(DBConstant.Group_Columns.COLUMN_GROUP_IMAGE, mJSONObjectGroup.getString("filepath"));
+									getContentResolver().update(DBConstant.Group_Columns.CONTENT_URI, values, DBConstant.Group_Columns.COLUMN_GROUP_ID_MYSQl+"=?", new String[]{mJSONObjectGroup.getString("group_id")});
+								 }catch(Exception e){
+									 Log.i(TAG, e.toString());
+								 }
+							 }
 						} while (mCursor.moveToNext());
 					}
 				}
@@ -771,6 +834,30 @@ public class GroupSelectActivity extends ActionBarActivity {
 							mArrayListGroup.get(s).setGroupIsActive("1");
 						}
 					}
+					
+					//ADDED TO FIX BUG : 10.03.15 : ADD ANOTHER CITY -> REMOVE ALL -> ADD ALL
+					String mGroupIdMySql[];
+					Cursor mCursorIdMySQL = getContentResolver().query(DBConstant.Group_Columns.CONTENT_URI, null, DBConstant.Group_Columns.COLUMN_CITY_ID+"=?", new String[]{mCityId}, null);
+					int gh = 0;
+					if(mCursorIdMySQL!=null && mCursorIdMySQL.getCount() > 0){
+						mCursorIdMySQL.moveToFirst();
+						mGroupIdMySql = new String[mCursorIdMySQL.getCount()];
+						do {
+							mGroupIdMySql[gh] = mCursorIdMySQL.getString(mCursorIdMySQL.getColumnIndex(DBConstant.Group_Columns.COLUMN_GROUP_ID_MYSQl));
+							gh++;
+						} while (mCursorIdMySQL.moveToNext());
+						
+						if(mGroupIdMySql.length > 0){
+							for(int n = 0 ;n < mGroupIdMySql.length ; n++){
+								for (int u = 0; u < mArrayListGroup.size(); u++) {
+									if(mArrayListGroup.get(u).getGroupIdMySQL().equalsIgnoreCase(mGroupIdMySql[n])){
+										mArrayListGroup.get(u).setGroupIsActive("1");
+									}
+								}	
+							}
+						}
+					}
+
 					
 					ContentValues valuesGroupActive = new ContentValues();
 					valuesGroupActive.put(DBConstant.Group_Columns.COLUMN_GROUP_IS_ACTIVE, "1");
@@ -805,6 +892,23 @@ public class GroupSelectActivity extends ActionBarActivity {
 				}
 			}*/
 		
+			//UPDATE CITY
+			for(int q = 0 ;q < mJSONArrayCity.length(); q++){
+				String mCityId = mJSONArrayCity.getJSONObject(q).getString("city_id");
+				Cursor mCursorCityInsertInDB = getContentResolver().query(DBConstant.City_Columns.CONTENT_URI, null, DBConstant.City_Columns.COLUMN_CITY_ID + "=?", new String[]{mCityId}, null);
+				if(mCursorCityInsertInDB!=null && mCursorCityInsertInDB.getCount() > 0){
+					ContentValues mContentValues = new ContentValues();
+					mContentValues.put(DBConstant.City_Columns.COLUMN_CITY_IS_ACTIVE, "1");
+					getContentResolver().update(DBConstant.City_Columns.CONTENT_URI, mContentValues, DBConstant.City_Columns.COLUMN_CITY_ID+"=?", new String[]{mCityId});
+				}else if(mCursorCityInsertInDB!=null){
+					ContentValues mContentValues = new ContentValues();
+					mContentValues.put(DBConstant.City_Columns.COLUMN_CITY_IS_ACTIVE, "1");
+					mContentValues.put(DBConstant.City_Columns.COLUMN_CITY_ID, mCityId);
+					mContentValues.put(DBConstant.City_Columns.COLUMN_CITY_NAME, mJSONArrayCity.getJSONObject(q).getString("city_name"));
+					getContentResolver().insert(DBConstant.City_Columns.CONTENT_URI, mContentValues);
+				}
+			}
+			
 			//GET ALL CITY ID
 			String mCityAllId;
 			
@@ -827,6 +931,48 @@ public class GroupSelectActivity extends ActionBarActivity {
 				mCursorGroupAllInactive.close();
 			}
 			mCursorCityAll.close();
+			
+			
+			for (int d = 0; d < mJSONArrayCity.length(); d++) {
+				JSONObject JSONObjectCityId = mJSONArrayCity.getJSONObject(d);
+				String mCityId = JSONObjectCityId.getString("city_id");
+				//ADDED TO FIX BUG : 10.03.15 : ADD ANOTHER CITY -> REMOVE ALL -> ADD ALL
+				String mGroupIdMySql[];
+				Cursor mCursorIdMySQL = getContentResolver().query(DBConstant.Group_Columns.CONTENT_URI, null, DBConstant.Group_Columns.COLUMN_CITY_ID+"=?", new String[]{mCityId}, null);
+				int gh = 0;
+				if(mCursorIdMySQL!=null && mCursorIdMySQL.getCount() > 0){
+					mCursorIdMySQL.moveToFirst();
+					mGroupIdMySql = new String[mCursorIdMySQL.getCount()];
+					do {
+						mGroupIdMySql[gh] = mCursorIdMySQL.getString(mCursorIdMySQL.getColumnIndex(DBConstant.Group_Columns.COLUMN_GROUP_ID_MYSQl));
+						gh++;
+					} while (mCursorIdMySQL.moveToNext());
+					
+					if(mGroupIdMySql.length > 0){
+						for(int n = 0 ;n < mGroupIdMySql.length ; n++){
+							for (int u = 0; u < mArrayListGroup.size(); u++) {
+								if(mArrayListGroup.get(u).getGroupIdMySQL().equalsIgnoreCase(mGroupIdMySql[n])){
+									mArrayListGroup.get(u).setGroupIsActive("1");
+								}
+							}	
+						}
+					}
+				}
+			}
+			
+			//INACTIVE GROUP : WHICH ARE NOT IN JSON
+			Cursor mInActiveGroup = getContentResolver().query(DBConstant.Group_Columns.CONTENT_URI, null, DBConstant.Group_Columns.COLUMN_GROUP_IS_ACTIVE+"=?", new String[]{"0"}, null);
+			if(mInActiveGroup!=null && mInActiveGroup.getCount() > 0){
+				mInActiveGroup.moveToFirst();
+				do {
+					for(int i = 0 ; i < mArrayListGroup.size() ;i++){
+						if(mArrayListGroup.get(i).getGroupIdMySQL().equalsIgnoreCase(mInActiveGroup.getString(mInActiveGroup.getColumnIndex(DBConstant.Group_Columns.COLUMN_GROUP_ID_MYSQl)))){
+							mArrayListGroup.get(i).setGroupIsActive("0");
+						}
+					}
+				} while (mInActiveGroup.moveToNext());
+			}
+			mInActiveGroup.close();
 		
 			mAdapter.notifyDataSetChanged();
 			ConnectionsManager.getInstance().initPushConnection();
@@ -838,6 +984,17 @@ public class GroupSelectActivity extends ActionBarActivity {
 	
 	private boolean checkIfGroupExistsInDB(String mGroupId){
 		Cursor mCursor = getContentResolver().query(DBConstant.Group_Columns.CONTENT_URI, null, DBConstant.Group_Columns.COLUMN_GROUP_ID+"=?", new String[]{mGroupId}, null);
+		if(mCursor!=null && mCursor.getCount() > 0){
+			return true;
+		}else if(mCursor!=null && mCursor.getCount() == 0){
+			return false;	
+		}else{
+			return false;
+		}
+	}
+	
+	private boolean checkIfGroupExistsInDBOnly(String mGroupId){
+		Cursor mCursor = getContentResolver().query(DBConstant.Group_Columns.CONTENT_URI, null, DBConstant.Group_Columns.COLUMN_GROUP_ID_MYSQl+"=?", new String[]{mGroupId}, null);
 		if(mCursor!=null && mCursor.getCount() > 0){
 			return true;
 		}else if(mCursor!=null && mCursor.getCount() == 0){
@@ -893,6 +1050,8 @@ public class GroupSelectActivity extends ActionBarActivity {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}catch(Exception e){
+				e.printStackTrace();
 			}
 			return null;
 		}
@@ -916,6 +1075,8 @@ public class GroupSelectActivity extends ActionBarActivity {
 						if (mJSONArray.length() > 0) {
 							mIsGroupData = true;
 						}	
+					}else{
+						Utilities.parseJSONUserInactiveStatus(mResponseFromGroupApi, GroupSelectActivity.this);
 					}
 					
 					JSONObject mJSONObjectCity = new JSONObject(mResponseFromCityApi);
@@ -942,6 +1103,7 @@ public class GroupSelectActivity extends ActionBarActivity {
 					syncGroupWithDB(mResponseFromGroupApi, mResponseFromCityApi);
 					Utilities.parseJSONUserInfo(mResponseFromGroupApi);
 				}
+				addDistinctGroupInDb();
 				setGridViewWithData();
 			}
 
@@ -971,7 +1133,8 @@ public class GroupSelectActivity extends ActionBarActivity {
 							.getMilliSecondsFromData(Integer.parseInt(mArrayListBanner.get(1).getBannerEndDate().substring(0, 4)),
 									Integer.parseInt(mArrayListBanner.get(1).getBannerEndDate().substring(5, 7)),
 									Integer.parseInt( mArrayListBanner.get(1).getBannerEndDate().substring(8, 10))))*/
-						if(Utilities.isToShowBannerAds(Utilities.getSystemDateYYYYMMDD(), mArrayListBanner.get(1).getBannerStartDate(), mArrayListBanner.get(1).getBannerEndDate()))	
+//						if(Utilities.isToShowBannerAds(Utilities.getSystemDateYYYYMMDD(), mArrayListBanner.get(1).getBannerStartDate(), mArrayListBanner.get(1).getBannerEndDate()))
+					if (mArrayListBanner.get(1).isBannerIsAdsOn())
 						{
 //						mImageLoader.displayImage(mArrayListBanner.get(1).getBannerImage(), mAdsImageView);
 						if(new File(AppConstants.ADS_DIRECTORY_PATH+Utilities.getFileNameFromPath(mArrayListBanner.get(1).getBannerImage())).exists()){
@@ -1033,6 +1196,31 @@ public class GroupSelectActivity extends ActionBarActivity {
 		return mArrayListBanner;
 	}
 	
+	private void addGroupTitleInDrawer(){
+		try{
+			String mGroupNames[] = Utilities.addGroupInDrawerFromDB();
+			if(mGroupNames !=null && mGroupNames.length > 0){
+				mDrawerTitles =null;
+				mDrawerDetailTitles =null;
+				mDrawerTitles = new String[4+mGroupNames.length];
+				mDrawerDetailTitles = new String[4+mGroupNames.length];
+				mDrawerTitles[0] = "Group Chat";
+				mDrawerTitles[1] = "Edit Profile";
+				mDrawerTitles[2] = "About Us";
+				mDrawerDetailTitles = mDrawerTitles;
+				
+				int j = 0;
+				for(int i = 3 ; i < (mGroupNames.length + mDrawerTitles.length +1); i++){
+					mDrawerTitles[i] = mGroupNames[j];
+					mDrawerDetailTitles[i]  = mGroupNames[j];
+					j++;
+				}
+			}
+		}catch(Exception e){
+			Log.i(TAG, e.toString());
+		}
+	}
+	
 	/*
 	 * Drawer Initilization
 	 */
@@ -1055,6 +1243,12 @@ public class GroupSelectActivity extends ActionBarActivity {
 				R.array.drawer_menu_detail_array);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);
+		
+		/*
+		 * Add Group Names in Drawer
+		 */
+//		addGroupTitleInDrawer();
+		
 		mDrawerAdapter = new DrawerArrayAdapter(this, mDrawerTitles,
 				mDrawerDetailTitles);
 		mDrawerList.setAdapter(mDrawerAdapter);
@@ -1237,14 +1431,27 @@ public class GroupSelectActivity extends ActionBarActivity {
 			/*case 3:
 				mDrawerProfileLayout.setVisibility(View.GONE);
 				mDrawerMenuLayout.setVisibility(View.VISIBLE);
-				mDrawerTitleView.setText(values[position]);
-				mDrawerTitleSubView.setText(values2[position]);
+				mDrawerTitleView.setText(Html.fromHtml(getResources().getString(R.string.str_activity_groups)));
+				mDrawerTitleSubView.setText("Groups :");
 				break;*/
 			default:
+				/*mDrawerProfileLayout.setVisibility(View.GONE);
+				mDrawerMenuLayout.setVisibility(View.VISIBLE);
+				mDrawerTitleView.setText(values[position]);
+				mDrawerTitleSubView.setText(values2[position]);*/
 				break;
 			}
 			return rowView;
 		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            return true;
+	    }
+	    return super.onKeyDown(keycode, e);
 	}
 	
 	/*

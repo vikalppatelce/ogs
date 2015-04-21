@@ -11,12 +11,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Window;
 
 import com.application.ui.view.Crouton;
 import com.application.ui.view.Style;
 import com.application.utils.BuildVars;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.flurry.android.FlurryAgent;
 
 /**
@@ -87,7 +88,15 @@ public class SplashActivity extends ActionBarActivity {
 		}
 		
 	}
-	
+
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            return true;
+	    }
+	    return super.onKeyDown(keycode, e);
+	}
 	/*
 	 * Flurry Analytics
 	 */

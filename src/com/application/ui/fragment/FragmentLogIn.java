@@ -37,7 +37,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.application.service.NotificationsService;
 import com.application.ui.activity.GroupChatActivity;
 import com.application.ui.activity.DepreceatedRegistrationActivity;

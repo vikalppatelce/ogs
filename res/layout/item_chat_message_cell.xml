@@ -48,8 +48,9 @@
         android:layout_marginLeft="10dp"
         android:layout_below="@id/chatDateDivider"
         android:layout_marginRight="40dp"
-        android:background="@drawable/shape_chat_left"
+        android:background="@drawable/chat_yellow_bubble"
         android:minWidth="@dimen/item_chat_minimum_width"
+        android:padding="2dp"
         android:orientation="horizontal"
         android:visibility="gone" >
 
@@ -101,8 +102,9 @@
         android:layout_alignParentRight="true"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/shape_chat_right"
+        android:background="@drawable/chat_pink_bubble"
         android:minWidth="@dimen/item_chat_minimum_width"
+        android:padding="2dp"
         android:layout_below="@id/chatDateDivider"
         android:orientation="horizontal"
         android:visibility="gone" >

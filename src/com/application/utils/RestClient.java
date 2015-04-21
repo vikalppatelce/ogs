@@ -111,9 +111,10 @@ public class RestClient {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch(Exception e){
+			text = RequestBuilder.getPostFailMessage().toString();
 		}
-		
-		if(BuildVars.DEBUG_VERSION){
+		if(BuildVars.DEBUG_VERSION || BuildVars.DEBUG_API){
 			Log.i(TAG, dataToSend.toString());
 			Log.i(TAG, url);	
 			Log.i(TAG, ""+text);

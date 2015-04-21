@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -32,7 +33,7 @@ import com.application.utils.BuildVars;
 import com.application.utils.RequestBuilder;
 import com.application.utils.RestClient;
 import com.application.utils.Utilities;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.flurry.android.FlurryAgent;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -151,7 +152,8 @@ public class AdsActivity extends ActionBarActivity {
 							.getMilliSecondsFromData(Integer.parseInt(mArrayListBanner.get(0).getBannerEndDate().substring(0, 4)),
 									Integer.parseInt(mArrayListBanner.get(0).getBannerEndDate().substring(5, 7)),
 									Integer.parseInt( mArrayListBanner.get(0).getBannerEndDate().substring(8, 10))))*/
-						if(Utilities.isToShowBannerAds(Utilities.getSystemDateYYYYMMDD(), mArrayListBanner.get(0).getBannerStartDate(), mArrayListBanner.get(0).getBannerEndDate()))
+//						if(Utilities.isToShowBannerAds(Utilities.getSystemDateYYYYMMDD(), mArrayListBanner.get(0).getBannerStartDate(), mArrayListBanner.get(0).getBannerEndDate()))
+					if (mArrayListBanner.get(0).isBannerIsAdsOn())
 						{
 //						mImageLoader.displayImage(mArrayListBanner.get(0).getBannerImage(), mAdsSponsorBigIv);
 						mAdsTitleTv.setText(mArrayListBanner.get(0).getBannerCompanyName());
@@ -262,6 +264,7 @@ public class AdsActivity extends ActionBarActivity {
 					 obj.setBannerImage(mJSONObjBanner.getString("filepath"));
 					 obj.setBannerCompanyName(mJSONObjBanner.getString("company_name"));
 					 obj.setBannerDescription(mJSONObjBanner.getString("description"));
+					 obj.setBannerIsAdsOn(mJSONObjBanner.getBoolean("is_ads_on"));
 					 mArrayListBanner.add(obj);
 				}
 				saveArrayListInPreferencesUsingGSON(mArrayListBanner);
@@ -325,6 +328,15 @@ public class AdsActivity extends ActionBarActivity {
 			}
 			parseFromJSONApi(mResponseFromApi);
 		}
+	}
+	
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            return true;
+	    }
+	    return super.onKeyDown(keycode, e);
 	}
 	
 	/*

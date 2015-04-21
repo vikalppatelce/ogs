@@ -11,7 +11,10 @@ package com.application.utils;
 public class BuildVars {
 	public static boolean DEBUG_VERSION = false;
 	public static boolean DEBUG_IMEI = false;
-	public static boolean DEBUGGING_PURPOSE = false;
+	public static boolean DEBUG_API = false;
+	public static boolean DEBUGGING_XMPP = false;
+	
+	public static boolean DEBUGGING_PURPOSE = true; //toggle chat send
 	
 	public static String DEBUG_LOGGING_IN ="Logging In";
 	public static String DEBUG_LOGGED_IN ="Logged In";
@@ -23,7 +26,7 @@ public class BuildVars {
 	public static String HOCKEY_APP_HASH = "your-hockeyapp-api-key-here";
 	public static String GCM_SENDER_ID = "83009443246";
 	public static String GCM_API_KEY ="AIzaSyBqYCtH2ut7FUmHI4nWITYj-IVEi58_m60";
-	public static String FLURRY_ID = "2G8DP62QNF9WJTYY7WC3";
+	public static String FLURRY_ID = "BPK5QPTWJDJPW4MC3DHH"; //BPK5QPTWJDJPW4MC3DHH //2G8DP62QNF9WJTYY7WC3
 	
 	
 	public static String SEND_LOGS_EMAIL = "androidbugtrace@gmail.com";

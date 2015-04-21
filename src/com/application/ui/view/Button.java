@@ -15,7 +15,7 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 import com.application.utils.Utilities;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 
 public abstract class Button extends CustomView {
 

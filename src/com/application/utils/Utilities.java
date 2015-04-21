@@ -85,7 +85,7 @@ import android.widget.ImageView;
 
 import com.application.beans.MessageObject;
 import com.application.ui.activity.ContactActivity;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 
 @SuppressLint("DefaultLocale")
 public class Utilities {
@@ -994,8 +994,7 @@ public class Utilities {
 			} catch (Exception e) {
 			       e.printStackTrace();
 			}
-			
-			try{
+			/*try{
 				String content ="TTOGS";
 				File f = new File(mFileDirectory,".nomedia");
 				FileWriter fw = new FileWriter(f.getAbsoluteFile());
@@ -1003,7 +1002,7 @@ public class Utilities {
 				bw.write(content);
 				bw.close();
 			}catch(Exception e){
-			}
+			}*/
 		}catch(Exception e){
 			Log.i(TAG, e.toString());
 		}
@@ -1014,7 +1013,8 @@ public class Utilities {
 		try{
 			File mFileDirectory = new File(AppConstants.GROUP_IMAGE_DIRECTORY_PATH);    
 			mFileDirectory.mkdirs();
-			String mFileName = mGroupId+".jpg";
+//			String mFileName = mGroupId+".jpg";
+			String mFileName = Utilities.getFileNameFromPath(mGroupId);
 			File file = new File (mFileDirectory, mFileName);
 			if (file.exists()){
 				file.delete(); 
@@ -1257,7 +1257,7 @@ public class Utilities {
 		try {
 //			if (isUserScriptionExpired(getSystemDateYYYYMMDD(),
 //					ApplicationLoader.getPreferences().getEndTime())) {
-				if(ApplicationLoader.getPreferences().getUserExpired()){
+			if (ApplicationLoader.getPreferences().getUserExpired()) {
 				showExpiredDialog(mActivity);
 				}
 				
@@ -1395,6 +1395,7 @@ public class Utilities {
 	    		.getResources().getString(R.string.dialog_update_title))
 	    .setMessage(mActivity
 	    		.getResources().getString(R.string.dialog_update_message))
+	    		.setCancelable(false)
 	    .setPositiveButton(mActivity
 	    		.getResources().getString(R.string.dialog_update_positive), new DialogInterface.OnClickListener() {
 	        public void onClick(DialogInterface dialog, int which) { 
@@ -1415,8 +1416,9 @@ public class Utilities {
 		new AlertDialog.Builder(mActivity)
 	    .setTitle(mActivity
 	    		.getResources().getString(R.string.dialog_expires_title))
-	    .setMessage(mActivity
-	    		.getResources().getString(R.string.dialog_expires_message))
+	    .setMessage(Html.fromHtml(mActivity
+	    		.getResources().getString(R.string.dialog_expires_message)))
+	    		.setCancelable(false)
 	    .setPositiveButton(mActivity
 	    		.getResources().getString(R.string.dialog_expires_positive), new DialogInterface.OnClickListener() {
 	        public void onClick(DialogInterface dialog, int which) { 
@@ -1436,6 +1438,7 @@ public class Utilities {
 	    		.getResources().getString(R.string.dialog_inactive_title))
 	    .setMessage(mActivity
 	    		.getResources().getString(R.string.dialog_inactive_message))
+	    		.setCancelable(false)
 	    .setPositiveButton(mActivity
 	    		.getResources().getString(R.string.dialog_inactive_positive), new DialogInterface.OnClickListener() {
 	        public void onClick(DialogInterface dialog, int which) { 
@@ -1465,7 +1468,37 @@ public class Utilities {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+	}
+	
+	public static void parseJSONUserInactiveStatus(String mResponseFromApi, Activity mActivity){
+		try{
+			JSONObject mJSONObject = new JSONObject(mResponseFromApi);
+			if(mJSONObject.getString("message").equalsIgnoreCase("User does not exist")){
+				showUserInactiveDialog(mActivity);
+			}
+		}catch(JSONException e){
+		}
+	}
+	
+	public static String[] addGroupInDrawerFromDB(){
+		try{
+			String mArr[];
+			Cursor c =ApplicationLoader.getApplication().getContentResolver().query(DBConstant.GroupDistinct_Columns.CONTENT_URI, null, null, null, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_ID_MYSQl + " ASC");
+			if(c!=null && c.getCount() > 0){
+				c.moveToFirst();
+				mArr = new String[c.getCount()];
+				int i = 0;
+				do {
+					mArr[i] = c.getString(c.getColumnIndex(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_NAME));
+					i++;
+				} while (c.moveToNext());
+				return mArr;
+			}
+		}catch(Exception e){
+			Log.i(TAG, e.toString());
+			return null;
+		}
+		return null;
 	}
 
 	@SuppressWarnings("resource")

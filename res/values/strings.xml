@@ -3,7 +3,7 @@
 
     <string name="app_name">TTOGS</string>
     <string name="hello_world">Hello world!</string>
-    <string name="package_name">com.digitattva.ttogs</string>
+    <string name="package_name">com.chat.ttogs</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_gridview">MainActivity</string>
     <string name="no_geocoder_available">No geocoder available</string>
@@ -564,15 +564,18 @@
     <string name="str_activity_registration_mobilenumber">MOBILE NUMBER</string>
     <string name="str_activity_registration_register">REGISTER</string>
     <string name="str_activity_registration_skip">SKIP</string>
-    <string name="str_activity_registration_call">Call on +91 000000000 for Registration</string>
-    <string name="str_activity_registration_terms">By Clicking Register you are agreeing to the<![CDATA[<br/>]]><![CDATA[<font color=\'#FFFFFF\'><b><u>terms of use</u></b></font>]]> and <![CDATA[<font color=\'#FFFFFF\'><b><u>Privacy Policy<u/></b></font>]]></string>
+    <string name="str_activity_registration_contact">Please contact TTOGS Adminstration <![CDATA[</br><font color=\'#0000FF\'><b><u>+919867944455</u></b></font>]]></string>
+    <string name="str_activity_registration_call">Call on <![CDATA[<font color=\'#0000FF\'><b><u>+919867944455</u></b></font>]]> for Registration</string>
+    <string name="str_activity_groups"><![CDATA[<font color=\'#FFFFFF\'><b><u>Groups :</u></b></font>]]></string>
+    <string name="str_activity_registration_terms">By clicking Register you are agreeing to the<![CDATA[<br/>]]><![CDATA[<font color=\'#FFFFFF\'><b><u>Terms of Use</u></b></font>]]> and <![CDATA[<font color=\'#FFFFFF\'><b><u>Privacy Policy<u/></b></font>]]></string>
     
     <string name="media_settings_header">Media</string>
     <string name="media_settings_gallery">Use default phones gallery to open images</string>
     <string name="media_settings_player">Use default phones music player to open audio</string>
     
+    
     <string name="dialog_expires_title">Subscription Expired!</string>
-    <string name="dialog_expires_message">Your subscription with TTOGS has been expired!Please contact TTOGS Adminstration.</string>
+    <string name="dialog_expires_message">Your subscription with TTOGS has been expired! Please contact TTOGS Adminstration.</string>
     <string name="dialog_expires_positive">OK</string>
     
     <string name="dialog_inactive_title">User Inactive!</string>
@@ -584,7 +587,10 @@
     <string name="dialog_update_positive">Update</string>
     <string name="dialog_update_negative">Cancel</string>
     
-    <string name="banner_ad_unit_id">ca-app-pub-3212589009898604/4901139570</string>
+<!--     <string name="banner_ad_unit_id">ca-app-pub-3212589009898604/4901139570</string> -->
+    <string name="banner_ad_unit_id">ca-app-pub-6532634302631984/2611827153</string>
     <string name="no_user_subscribed_to_group">You are no more subscribed to these group!</string>
+    
+    <string name="about"><![CDATA[</br></br><font color=\'#0000FF\'><b><u>+919867944455</u></b></font>]]></string>
 
 </resources>

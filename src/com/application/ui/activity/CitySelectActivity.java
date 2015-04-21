@@ -6,6 +6,7 @@ package com.application.ui.activity;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.apache.commons.net.io.Util;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,10 +29,12 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +67,7 @@ import com.application.utils.DBConstant;
 import com.application.utils.RequestBuilder;
 import com.application.utils.RestClient;
 import com.application.utils.Utilities;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.flurry.android.FlurryAgent;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -556,6 +559,8 @@ public class CitySelectActivity extends ActionBarActivity {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}catch(Exception e){
+				e.printStackTrace();
 			}
 			return null;
 		}
@@ -605,6 +610,30 @@ public class CitySelectActivity extends ActionBarActivity {
 		mImageLoader.init(ImageLoaderConfiguration.createDefault(this));
 	}
 	
+	
+	private void addGroupTitleInDrawer(){
+		try{
+			String mGroupNames[] = Utilities.addGroupInDrawerFromDB();
+			if(mGroupNames !=null && mGroupNames.length > 0){
+				mDrawerTitles =null;
+				mDrawerDetailTitles =null;
+				mDrawerTitles = new String[4+mGroupNames.length];
+				mDrawerDetailTitles = new String[4+mGroupNames.length];
+				mDrawerTitles[0] = "Group Chat";
+				mDrawerTitles[1] = "Edit Profile";
+				mDrawerTitles[2] = "About Us";
+				mDrawerDetailTitles = mDrawerTitles;
+				
+				int j = 0;
+				for(int i = 3 ; i < (mGroupNames.length + mDrawerTitles.length +1); i++){
+					mDrawerTitles[i] = mGroupNames[j];
+					mDrawerDetailTitles[i]  = mGroupNames[j];
+					j++;
+				}
+			}
+		}catch(Exception e){
+		}
+	}
 	/*
 	 * Drawer Initilization
 	 */
@@ -627,6 +656,12 @@ public class CitySelectActivity extends ActionBarActivity {
 				R.array.drawer_menu_detail_array);
 		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
 				GravityCompat.START);
+		
+		/*
+		 * Add Group Names in Drawer
+		 */
+//		addGroupTitleInDrawer();
+		
 		mDrawerAdapter = new DrawerArrayAdapter(this, mDrawerTitles,
 				mDrawerDetailTitles);
 		mDrawerList.setAdapter(mDrawerAdapter);
@@ -808,16 +843,29 @@ public class CitySelectActivity extends ActionBarActivity {
 			/*case 3:
 				mDrawerProfileLayout.setVisibility(View.GONE);
 				mDrawerMenuLayout.setVisibility(View.VISIBLE);
-				mDrawerTitleView.setText(values[position]);
+				mDrawerTitleView.setText(Html.fromHtml(getResources().getString(R.string.str_activity_groups)));
 				mDrawerTitleSubView.setText(values2[position]);
 				break;*/
 			default:
+				/*mDrawerProfileLayout.setVisibility(View.GONE);
+				mDrawerMenuLayout.setVisibility(View.VISIBLE);
+				mDrawerTitleView.setText(values[position]);
+				mDrawerTitleSubView.setText(values2[position]);*/
 				break;
 			}
 			return rowView;
 		}
 	}
 
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            return true;
+	    }
+	    return super.onKeyDown(keycode, e);
+	}
+	
 	/*
 	 * Flurry Analytics
 	 */

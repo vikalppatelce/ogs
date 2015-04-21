@@ -96,6 +96,7 @@
                 android:background="@android:color/transparent"
                 android:hint="@string/str_activity_registration_mobilenumber"
                 android:inputType="number"
+                android:maxLength="10"
                 android:textColor="@color/registration_text"
                 android:textColorHint="@color/registration_text"
                 android:textSize="16sp" />

@@ -25,6 +25,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -54,7 +55,7 @@ import com.application.utils.LocaleController;
 import com.application.utils.RequestBuilder;
 import com.application.utils.RestClient;
 import com.application.utils.Utilities;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.flurry.android.FlurryAgent;
 
 @SuppressLint("NewApi")
@@ -138,6 +139,10 @@ public class RegistrationCitySelectActivity extends ActionBarActivity {
 							.getString(R.string.no_internet_connection),
 					Style.ALERT).show();
 		}
+	}
+	
+	private void getDataFromAssets(){
+		loadUiWithList(Utilities.readFile("cities.json"));
 	}
 
 	private void loadUiWithList(String mResponseFromApi) {
@@ -270,7 +275,7 @@ public class RegistrationCitySelectActivity extends ActionBarActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if(Utilities.isInternetConnected()){
+		/*if(Utilities.isInternetConnected()){
 			getDataFromApi();	
 		}else{
 			mRetryBtn = new Button(RegistrationCitySelectActivity.this);
@@ -280,7 +285,9 @@ public class RegistrationCitySelectActivity extends ActionBarActivity {
 			mParams.gravity = Gravity.CENTER;
 			mFrameLayout.addView(mRetryBtn, mParams);
 			setRetryListener(mRetryBtn);
-		}
+		}*/
+		
+		getDataFromAssets();
 		
 		if (listViewAdapter != null) {
 			listViewAdapter.notifyDataSetChanged();
@@ -345,6 +352,7 @@ public class RegistrationCitySelectActivity extends ActionBarActivity {
 				// TODO Auto-generated method stub
 				if (!TextUtils.isEmpty(mEditText.toString().toLowerCase())) {
 					searchListViewAdapter.search(mEditText.toString());
+					searching = true;
 					searchWas = true;
 					listView.setAdapter(searchListViewAdapter);
 
@@ -471,6 +479,15 @@ public class RegistrationCitySelectActivity extends ActionBarActivity {
 				getDataFromApi();
 			}
 		});
+	}
+	
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            return true;
+	    }
+	    return super.onKeyDown(keycode, e);
 	}
 	
 	/*

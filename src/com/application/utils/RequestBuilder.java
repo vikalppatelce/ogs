@@ -76,7 +76,7 @@ public class RequestBuilder {
 		JSONObject stringBuffer = new JSONObject();
 		try {
 			stringBuffer.put("imei", Utilities.getDeviceId());
-			stringBuffer.put("action", "getcitiesgroups");
+			stringBuffer.put("action", "getgroups");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -100,6 +100,19 @@ public class RequestBuilder {
 		try {
 			stringBuffer.put("user_id", ApplicationLoader.getPreferences().getUserId());
 			stringBuffer.put("action", "getbanners");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return stringBuffer;
+	}
+	
+	public static JSONObject getPostFailMessage() {
+		JSONObject stringBuffer = new JSONObject();
+		try {
+			stringBuffer.put("success", false);
+			stringBuffer.put("message", "Please Try Again!");
+			stringBuffer.put("error", "Please Try Again!");
+			stringBuffer.put("messageError", "Please Try Again!");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -210,6 +223,22 @@ public class RequestBuilder {
 		return stringBuffer;
 	}
 	
+	public static JSONObject getPostRegistrationSkipData() {
+		JSONObject stringBuffer = new JSONObject();
+		try {
+			stringBuffer.put("action", "checkimei");
+			if(BuildVars.DEBUG_IMEI){
+				stringBuffer.put("imei", "124123412423");	
+			}else{
+				stringBuffer.put("imei", Utilities.getDeviceId());				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return stringBuffer;
+	}
+	
 	
 	public static JSONObject getPostProfileUpdateData(String filePath, String fileExtension) {
 		JSONObject stringBuffer = new JSONObject();
@@ -281,7 +310,7 @@ public class RequestBuilder {
 		try {
 			for (int i = 0; i < mListLostMessagesInfo.size(); i++) {
 				JSONObject mJSONObject = new JSONObject();
-				mJSONObject.put("room_jid", mListLostMessagesInfo.get(i).getmRoomJabberId());
+				mJSONObject.put("room_jid", mListLostMessagesInfo.get(i).getmRoomJabberId().substring(0, mListLostMessagesInfo.get(i).getmRoomJabberId().indexOf("@")));
 				mJSONObject.put("last_message_id", mListLostMessagesInfo.get(i).getmLastMessageId());
 				mJSONArray.put(mJSONObject);
 			}

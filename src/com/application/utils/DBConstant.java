@@ -12,6 +12,7 @@ public class DBConstant {
 	public static final String TABLE_GROUPS		 			    = "groups";
 	public static final String TABLE_CITY		 			    = "city";
 	public static final String TABLE_MEMBER		 			    = "member";
+	public static final String TABLE_GROUP_D		 			= "groupsdistinct";
 	
 //	public static final Uri DISTINCT_CONTENT_URI = Uri.parse("content://"+ ZnameDB.AUTHORITY + "/contacts");
 	
@@ -119,5 +120,30 @@ public class DBConstant {
 		public static final String COLUMN_MEMBER_NAME				    = "_member_name";
 		public static final String COLUMN_MEMBER_IMAGE				    = "_member_image";
 		public static final String COLUMN_MEMBER_IS_ACTIVE				= "_is_active";
+	}
+	
+	public static class GroupDistinct_Columns implements BaseColumns
+	{
+		public static final Uri CONTENT_URI = Uri.parse("content://"+ ApplicationDB.AUTHORITY + "/groupsdistinct");
+		public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/groupsdistinct";
+		
+		public static final String COLUMN_ID 							= "_id";
+		public static final String COLUMN_GROUP_ID 					    = "_group_id";
+		public static final String COLUMN_GROUP_ID_MYSQl			    = "_group_id_mysql";
+		public static final String COLUMN_GROUP_JABBER_ID			    = "_group_jabber_id";
+		public static final String COLUMN_CITY_ID 					    = "_city_id";
+		public static final String COLUMN_GROUP_NAME				    = "_name";
+		public static final String COLUMN_GROUP_CREATED 				= "_created_at";
+		public static final String COLUMN_GROUP_LAST_PING 				= "_last_ping_at";
+		public static final String COLUMN_GROUP_LAST_MSG 				= "_last_message_at";
+		public static final String COLUMN_GROUP_IMAGE 					= "_path";
+		public static final String COLUMN_GROUP_IS_JOIN 				= "_is_join";
+		public static final String COLUMN_GROUP_IS_UNREAD 				= "_is_unread";
+		public static final String COLUMN_GROUP_IS_READ 				= "_is_read";
+		public static final String COLUMN_GROUP_IS_ADMIN 				= "_is_admin";
+		public static final String COLUMN_GROUP_UNREAD_COUNTER			= "unread_counter";
+		public static final String COLUMN_GROUP_MEMBERS 				= "_members";
+		public static final String COLUMN_GROUP_IS_ACTIVE				= "_is_active";
+		public static final String COLUMN_GROUP_IMAGE_LOCAL				= "_path_local";
 	}
 }

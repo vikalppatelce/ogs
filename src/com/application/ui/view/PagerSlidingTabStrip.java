@@ -27,7 +27,7 @@ package com.application.ui.view;
 
 import java.util.Locale;
 
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

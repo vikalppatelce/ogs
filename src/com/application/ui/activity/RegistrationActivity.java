@@ -29,6 +29,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -39,7 +40,7 @@ import android.widget.TextView;
 
 import com.application.beans.City;
 import com.application.beans.Group;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.flurry.android.FlurryAgent;
 import com.application.ui.view.Crouton;
 import com.application.ui.view.Style;
@@ -118,6 +119,8 @@ public class RegistrationActivity extends ActionBarActivity {
 		mTextViewTerms = (TextView)findViewById(R.id.terms);
 		
 		mTextViewTerms.setText(Html.fromHtml(getResources().getString(R.string.str_activity_registration_terms)));
+		
+		mTextViewCall.setText(Html.fromHtml(getResources().getString(R.string.str_activity_registration_call)));
 	}
 	
 	private void hideActionBar(){
@@ -139,7 +142,7 @@ public class RegistrationActivity extends ActionBarActivity {
 				if (validateFields()) {
 					if (Utilities.isInternetConnected()) {
 						new AysncTaskRegistration(
-								buildJSONRequestForRegistration()).execute();
+								buildJSONRequestForRegistration(),true).execute();
 					} else {
 						Crouton.makeText(
 								RegistrationActivity.this,
@@ -171,6 +174,44 @@ public class RegistrationActivity extends ActionBarActivity {
 			}
 		});
 		
+		mTextViewCall.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				Uri number = Uri.parse("tel:+919867944455");
+		        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+		        startActivity(callIntent);	
+			}
+		});
+		
+		mTextViewSkip.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				if (Utilities.isInternetConnected()) {
+					new AysncTaskRegistration(
+							buildJSONRequestForSkip(),false).execute();
+				} else {
+					Crouton.makeText(
+							RegistrationActivity.this,
+							getResources().getString(
+									R.string.no_internet_connection),
+							Style.ALERT).show();
+				}
+			}
+		});
+		
+		
+		mTextViewTerms.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent mIntent = new Intent(RegistrationActivity.this, TermsAndConditionActivity.class);
+				startActivity(mIntent);
+			}
+		});
 	}
 
 	private void getSpinnerData() {
@@ -189,6 +230,15 @@ public class RegistrationActivity extends ActionBarActivity {
 			Crouton.makeText(RegistrationActivity.this,
 					"Please Enter Valid Display Name", Style.ALERT).show();
 			return false;
+		}
+		
+		if (!TextUtils.isEmpty(mEditEmailAddress.getText().toString())) {
+			if (!android.util.Patterns.EMAIL_ADDRESS.matcher(
+					mEditEmailAddress.getText().toString()).matches()) {
+				Crouton.makeText(RegistrationActivity.this,
+						"Please Enter Valid Email Address", Style.ALERT).show();
+				return false;
+			}
 		}
 
 		if (TextUtils.isEmpty(mEditMobileNumber.getText().toString())) {
@@ -210,16 +260,6 @@ public class RegistrationActivity extends ActionBarActivity {
 		}
 		
 
-		/*if (!TextUtils.isEmpty(mEditEmailAddress.getText().toString())) {
-			if (!android.util.Patterns.EMAIL_ADDRESS.matcher(
-					mEditEmailAddress.getText().toString()).matches()) {
-				Crouton.makeText(RegistrationActivity.this,
-						"Please Enter Valid Email Address", Style.ALERT).show();
-				return false;
-			}
-
-		}*/
-
 		if (!TextUtils.isEmpty(mEditMobileNumber.getText().toString())) {
 			Pattern p = Pattern.compile("[0-9]+");
 			Matcher matcher = p.matcher(mEditMobileNumber.getText().toString());
@@ -228,8 +268,14 @@ public class RegistrationActivity extends ActionBarActivity {
 						"Please Enter Valid Mobile Number", Style.ALERT).show();
 				return false;
 			}
+			
+			if(mEditMobileNumber.getText().toString().length() != 10){
+				Crouton.makeText(RegistrationActivity.this,
+						"Please Enter 10 Digit Valid Mobile Number", Style.ALERT).show();
+				return false;
+			}
 		}
-
+		
 		return true;
 	}
 
@@ -242,8 +288,15 @@ public class RegistrationActivity extends ActionBarActivity {
 						.getText().toString());
 	}
 	
+	private JSONObject buildJSONRequestForSkip(){
+		return RequestBuilder.getPostRegistrationSkipData();
+	}
+	
 
 	private void onSuccessfulRegistration(final String mResponseFromApi) {
+		setDefaultValueToPreferences();
+		parseJSONFromApi(mResponseFromApi);
+		ApplicationLoader.getPreferences().setUserRegistrationTime(String.valueOf(System.currentTimeMillis()));
 		Utilities.searchQueue.postRunnable(new Runnable() {
 			@Override
 			public void run() {
@@ -256,48 +309,39 @@ public class RegistrationActivity extends ActionBarActivity {
 						ApplicationLoader.getPreferences().setUserRegistrationTime(String.valueOf(timeInfo.getMessage().getTransmitTimeStamp().getTime()));
 				}catch(Exception e){
 				}
-				
-				parseJSONFromApi(mResponseFromApi);
-				try {
-					JSONObject mJSONObject = new JSONObject(mResponseFromApi);
-					
-					/*if(mJSONObject.getString("created").equalsIgnoreCase("0")){
-						Crouton.makeText(RegistrationActivity.this,
-								"Registered Successfull!",
-								Style.CONFIRM).show();	
-					}else{
-						Crouton.makeText(RegistrationActivity.this,
-								"User already Registered!",
-								Style.CONFIRM).show();
-					}*/
-					
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				Log.i(TAG, "userid : "+ApplicationLoader.getPreferences().getUserId());
+				if(!TextUtils.isEmpty(ApplicationLoader.getPreferences().getUserId())){
+					Intent mIntent = new Intent(RegistrationActivity.this,GroupSelectActivity.class);
+					startActivity(mIntent);
+					finish();	
 				}
-				
-				Intent mIntent = new Intent(RegistrationActivity.this,GroupSelectActivity.class);
-				startActivity(mIntent);
-				finish();				
 			}
 		});
 	}
 	
+	private void setDefaultValueToPreferences(){
+		ApplicationLoader.getPreferences().setDisplayName(mEditDisplayName.getText().toString());
+		ApplicationLoader.getPreferences().setDisplayName(mEditMobileNumber.getText().toString());
+		ApplicationLoader.getPreferences().setDisplayName(mEditEmailAddress.getText().toString());
+	}
+	
 	private void parseJSONFromApi(String mResponseFromApi){
 		try{
+			Log.i(TAG, mResponseFromApi);
 			JSONObject mJSONObject = new JSONObject(mResponseFromApi);
 			ApplicationLoader.getPreferences().setJabberId(mJSONObject.getString("jid"));
-			ApplicationLoader.getPreferences().setDisplayName(mJSONObject.getString("display_name"));
+			ApplicationLoader.getPreferences().setUserId(mJSONObject.getString("user_id"));
 			ApplicationLoader.getPreferences().setStartTime(mJSONObject.getString("start_date"));
 			ApplicationLoader.getPreferences().setEndTime(mJSONObject.getString("end_date"));
-			ApplicationLoader.getPreferences().setUserNumber(mJSONObject.getString("mobile_no"));
+			ApplicationLoader.getPreferences().setProfilePicPath(mJSONObject.getString("user_image_path"));
 			ApplicationLoader.getPreferences().setUserActiveStatus(mJSONObject.getString("status"));
-			ApplicationLoader.getPreferences().setUserId(mJSONObject.getString("user_id"));
+			ApplicationLoader.getPreferences().setUserNumber(mJSONObject.getString("mobile_no"));
+			ApplicationLoader.getPreferences().setDisplayName(mJSONObject.getString("display_name"));
 			ApplicationLoader.getPreferences().setUserCity(mJSONObject.getString("city"));
 			ApplicationLoader.getPreferences().setUserCityId(mCityId);
 			ApplicationLoader.getPreferences().setUserGroupId(mGroupId);
 			ApplicationLoader.getPreferences().setUserEmailId(mJSONObject.getString("email"));
-			ApplicationLoader.getPreferences().setProfilePicPath(mJSONObject.getString("user_image_path"));
+			ApplicationLoader.getPreferences().setUserService(mJSONObject.getString("service"));
 		}catch(Exception e){
 		}
 	}
@@ -308,11 +352,13 @@ public class RegistrationActivity extends ActionBarActivity {
 		private JSONObject mJSONObjectToSend;
 		private String mErrorMessage;
 		private String mResponseFromApi;
+		private boolean isFromRegister;
 
-		public AysncTaskRegistration(JSONObject mJSONObjectToSend) {
+		public AysncTaskRegistration(JSONObject mJSONObjectToSend, boolean isFromRegister) {
 			super();
 			// TODO Auto-generated constructor stub
 			this.mJSONObjectToSend = mJSONObjectToSend;
+			this.isFromRegister = isFromRegister;
 		}
 
 		@Override
@@ -320,7 +366,11 @@ public class RegistrationActivity extends ActionBarActivity {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
 			mProgress = new ProgressDialog(RegistrationActivity.this);
-			mProgress.setMessage("Registration");
+			if(isFromRegister){
+				mProgress.setMessage("Registration");	
+			}else{
+				mProgress.setMessage("Please wait");
+			}
 			mProgress.show();
 		}
 
@@ -344,6 +394,14 @@ public class RegistrationActivity extends ActionBarActivity {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch(Exception e){
+				e.printStackTrace();
+				try {
+					mErrorMessage = RequestBuilder.getPostFailMessage().getString("error");
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 			return null;
 		}
@@ -370,10 +428,14 @@ public class RegistrationActivity extends ActionBarActivity {
 			if(isSuccessfulRegistration){
 				onSuccessfulRegistration(mResponseFromApi);
 			}else{
-				if(!TextUtils.isEmpty(mErrorMessage)){
-					Crouton.makeText(RegistrationActivity.this, mErrorMessage, Style.ALERT).show();	
+				if(isFromRegister){
+					if(!TextUtils.isEmpty(mErrorMessage)){
+						Crouton.makeText(RegistrationActivity.this, mErrorMessage, Style.ALERT).show();
+					}else{
+						Crouton.makeText(RegistrationActivity.this, "Please try again!", Style.ALERT).show();
+					}						
 				}else{
-					Crouton.makeText(RegistrationActivity.this, "Please try again!", Style.ALERT).show();
+					Crouton.makeText(RegistrationActivity.this, "Please Register first!", Style.ALERT).show();
 				}
 			}
 		}
@@ -565,6 +627,15 @@ public class RegistrationActivity extends ActionBarActivity {
 			ApplicationLoader mAppLoader = new ApplicationLoader();
 			mAppLoader.registerInBackground();
 		}
+	}
+	
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            return true;
+	    }
+	    return super.onKeyDown(keycode, e);
 	}
 
 	/*

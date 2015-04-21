@@ -19,6 +19,7 @@ public class Banner implements Parcelable {
 	private String bannerEndDate;
 	private String bannerCompanyName;
 	private String bannerPosition;
+	private boolean bannerIsAdsOn;
 
 	public Banner() {
 		super();
@@ -27,7 +28,8 @@ public class Banner implements Parcelable {
 
 	public Banner(String bannerId, String bannerName, String bannerDescription,
 			String bannerImage, String bannerStartDate, String bannerEndDate,
-			String bannerCompanyName, String bannerPosition) {
+			String bannerCompanyName, String bannerPosition,
+			boolean bannerIsAdsOn) {
 		super();
 		this.bannerId = bannerId;
 		this.bannerName = bannerName;
@@ -37,6 +39,7 @@ public class Banner implements Parcelable {
 		this.bannerEndDate = bannerEndDate;
 		this.bannerCompanyName = bannerCompanyName;
 		this.bannerPosition = bannerPosition;
+		this.bannerIsAdsOn = bannerIsAdsOn;
 	}
 
 	public String getBannerId() {
@@ -103,6 +106,14 @@ public class Banner implements Parcelable {
 		this.bannerPosition = bannerPosition;
 	}
 
+	public boolean isBannerIsAdsOn() {
+		return bannerIsAdsOn;
+	}
+
+	public void setBannerIsAdsOn(boolean bannerIsAdsOn) {
+		this.bannerIsAdsOn = bannerIsAdsOn;
+	}
+
 	protected Banner(Parcel in) {
 		bannerId = in.readString();
 		bannerName = in.readString();
@@ -112,6 +123,7 @@ public class Banner implements Parcelable {
 		bannerEndDate = in.readString();
 		bannerCompanyName = in.readString();
 		bannerPosition = in.readString();
+		bannerIsAdsOn = in.readByte() != 0x00;
 	}
 
 	@Override
@@ -129,6 +141,7 @@ public class Banner implements Parcelable {
 		dest.writeString(bannerEndDate);
 		dest.writeString(bannerCompanyName);
 		dest.writeString(bannerPosition);
+		dest.writeByte((byte) (bannerIsAdsOn ? 0x01 : 0x00));
 	}
 
 	@SuppressWarnings("unused")

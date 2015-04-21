@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.application.ui.activity.DepreceatedRegistrationActivity;
 import com.application.ui.view.Crouton;
 import com.application.ui.view.Style;

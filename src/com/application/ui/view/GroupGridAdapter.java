@@ -22,8 +22,7 @@ import android.widget.TextView;
 
 import com.application.beans.Group;
 import com.application.utils.Utilities;
-import com.digitattva.ttogs.R;
-import com.digitattva.ttogs.R.color;
+import com.chat.ttogs.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -146,7 +145,8 @@ public class GroupGridAdapter extends BaseAdapter implements Filterable {
 				@Override
 				public void onLoadingComplete(String arg0, View arg1, Bitmap mBitmap) {
 					// TODO Auto-generated method stub
-					Utilities.writeBitmapToSDCardGroupImages(mBitmap, mObj.getGroupId());
+//					Utilities.writeBitmapToSDCardGroupImages(mBitmap, mObj.getGroupId());
+					Utilities.writeBitmapToSDCardGroupImages(mBitmap, mObj.getGroupImagePath());
 				}
 				
 				@Override
@@ -162,6 +162,7 @@ public class GroupGridAdapter extends BaseAdapter implements Filterable {
 		v.setTag(R.id.TAG_GROUP_JABBER_ID, mObj.getGroupJabberId());
 		v.setTag(R.id.TAG_GROUP_CITY_ID, mObj.getGroupCityId());
 		v.setTag(R.id.TAG_GROUP_ACTIVE, mObj.getGroupIsActive());
+//		v.setTag(R.id.TAG_GROUP_ACTIVE, "1");
 
 		return v;
 	}

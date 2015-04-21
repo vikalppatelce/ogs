@@ -33,7 +33,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 
 public class FragmentAttendance extends Fragment implements
 		ConnectionCallbacks, OnConnectionFailedListener {

@@ -94,7 +94,8 @@ public class OfflinePullMessageService extends IntentService{
 	}
 	
 	private void fetchLastMessageIdAgainstRoomFromDB(ArrayList<LostMessagesInfo> mListLostMessagesInfo){
-		Cursor mCursor = ApplicationLoader.getApplication().getContentResolver().query(DBConstant.Group_Columns.CONTENT_URI, null, null, null, null);
+//		Cursor mCursor = ApplicationLoader.getApplication().getContentResolver().query(DBConstant.Group_Columns.CONTENT_URI, null, null, null, null);
+		Cursor mCursor = ApplicationLoader.getApplication().getContentResolver().query(DBConstant.Group_Columns.CONTENT_URI, null, DBConstant.Group_Columns.COLUMN_GROUP_IS_ACTIVE + "=?", new String[]{"1"}, null);
 		if(mCursor!=null && mCursor.getCount() > 0){
 			mCursor.moveToNext();
 			do {
@@ -151,11 +152,11 @@ public class OfflinePullMessageService extends IntentService{
 			
 			String userId = messageIdFromJSON.substring(0, messageIdFromJSON.length() - messageTime.length());
 			
-			if (!messageFrom.equalsIgnoreCase(ApplicationLoader.getPreferences().getJabberId())) {
+			if (!messageUserJabberId.equalsIgnoreCase(ApplicationLoader.getPreferences().getJabberId())) {
 				Cursor mCursor  = ApplicationLoader.getApplication().getContentResolver().query(DBConstant.Chat_Columns.CONTENT_URI, null, DBConstant.Chat_Columns.COLUMN_MESSAGE_ID+"=?", new String[]{messageIdFromJSON}, null);
 				if(mCursor!=null && mCursor.getCount() == 0){
 					ContentValues values = new ContentValues();
-					values.put(DBConstant.Chat_Columns.COLUMN_USER_ID,userId);
+					values.put(DBConstant.Chat_Columns.COLUMN_USER_ID,messageFrom);
 					values.put(DBConstant.Chat_Columns.COLUMN_GROUP_ID,groupId);
 					values.put(DBConstant.Chat_Columns.COLUMN_CITY_ID, messageCityId);
 					values.put(DBConstant.Chat_Columns.COLUMN_USER_ID_MYSQL, messageUserIdMySQL);
@@ -190,16 +191,16 @@ public class OfflinePullMessageService extends IntentService{
 					messageObject.setMessageFileLink(messageFileLink);
 					messageObject.setMessageDate(Utilities.getDate(Long.parseLong(messageTime)));
 					messageObject.setMessageTime(Utilities.getTime(Long.parseLong(messageTime)));
-					messageObject.setUserId(userId);
+					messageObject.setUserId(messageFrom);
 					messageObject.setFilePath(Utilities.getFilePath(messageType, Utilities.getJabberGroupIdWithoutTale(groupId),messageTime));
 					
 					mIntent.putExtra("MessageObject",messageObject);
-					ConnectionsManager.getInstance().pushNotification(groupId, messageCityId,userId, messageObject,mIntent);	
+					ConnectionsManager.getInstance().pushNotification(groupId, messageCityId,messageFrom, messageObject,mIntent);	
 				}
 			} else {// your message only! Use it as
 					// acknowledgement
 				ContentValues values = new ContentValues();
-				values.put(DBConstant.Chat_Columns.COLUMN_USER_ID,userId);
+				values.put(DBConstant.Chat_Columns.COLUMN_USER_ID,messageFrom);
 				values.put(DBConstant.Chat_Columns.COLUMN_GROUP_ID,groupId);
 				values.put(DBConstant.Chat_Columns.COLUMN_MESSAGE,messageText);
 				values.put(DBConstant.Chat_Columns.COLUMN_MESSAGE_ID,messageIdFromJSON);

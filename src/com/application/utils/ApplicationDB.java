@@ -15,7 +15,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
 
-import com.digitattva.ttogs.BuildConfig;
+import com.chat.ttogs.BuildConfig;
 
 public class ApplicationDB extends ContentProvider{
 	
@@ -28,13 +28,15 @@ public class ApplicationDB extends ContentProvider{
 	private static final int CHAT 		  = 2;
 	private static final int GROUPS		  = 3;
 	private static final int CITY         = 4;
-	private static final int MEMBER         = 5;
+	private static final int MEMBER       = 5;
+	private static final int GROUPS_D     = 6;
 	
 	private static HashMap<String, String> notificationProjectionMap;
 	private static HashMap<String, String> chatProjectionMap;
 	private static HashMap<String, String> groupProjectionMap;
 	private static HashMap<String, String> cityProjectionMap;
 	private static HashMap<String, String> memberProjectionMap;
+	private static HashMap<String, String> groupDistinctProjectionMap;
 	
 	private static class OpenHelper extends SQLiteOpenHelper {
 
@@ -128,6 +130,35 @@ public class ApplicationDB extends ContentProvider{
 				Log.i(TAG, strBuilderGroup.toString());
 			}
 			
+			StringBuilder strBuilderGroupDistinct = new StringBuilder();
+			strBuilderGroupDistinct.append("CREATE TABLE ");
+			strBuilderGroupDistinct.append(DBConstant.TABLE_GROUP_D);
+			strBuilderGroupDistinct.append('(');
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_ID +" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," );
+			/*INTEGER(20) PRIMARY KEY NOT NULL DEFAULT (STRFTIME('%s',CURRENT_TIMESTAMP)),*/
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_ID +" TEXT," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_JABBER_ID +" TEXT," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_ID_MYSQl +" TEXT UNIQUE," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_JOIN +" TEXT ," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_NAME +" TEXT UNIQUE," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IMAGE_LOCAL +" TEXT ," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_UNREAD +" NUMBER DEFAULT 0," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_UNREAD_COUNTER +" TEXT ," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_CITY_ID +" TEXT ," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_ACTIVE +" NUMBER DEFAULT 1," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_READ +" NUMBER DEFAULT 0," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_ADMIN +" NUMBER DEFAULT 0," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_CREATED +" TEXT ," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_MEMBERS +" TEXT ," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_LAST_PING +" TEXT ," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IMAGE +" TEXT ," );
+			strBuilderGroupDistinct.append(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_LAST_MSG +" TEXT " );
+			strBuilderGroupDistinct.append(')');
+			db.execSQL(strBuilderGroupDistinct.toString());
+			if (BuildConfig.DEBUG) {
+				Log.i(TAG, strBuilderGroupDistinct.toString());
+			}
+			
 			StringBuilder strBuilderCity = new StringBuilder();
 			strBuilderCity.append("CREATE TABLE ");
 			strBuilderCity.append(DBConstant.TABLE_CITY);
@@ -181,6 +212,7 @@ public class ApplicationDB extends ContentProvider{
 			db.execSQL("DROP TABLE IF EXISTS " + DBConstant.TABLE_GROUPS);
 			db.execSQL("DROP TABLE IF EXISTS " + DBConstant.TABLE_CITY);
 			db.execSQL("DROP TABLE IF EXISTS " + DBConstant.TABLE_MEMBER);
+			db.execSQL("DROP TABLE IF EXISTS " + DBConstant.TABLE_GROUP_D);
 			
 			onCreate(db);
 		}
@@ -188,10 +220,11 @@ public class ApplicationDB extends ContentProvider{
 
 	/* VERSION      DATABASE_VERSION      MODIFIED            BY
 	 * ----------------------------------------------------------------
-	 * V 0.0.1             1              16/05/14        VIKALP PATEL
+	 * V 0.0.1             1              18/02/15        VIKALP PATEL
+	 * V 0.0.2             2              13/03/15        VIKALP PATEL
 	 * -----------------------------------------------------------------
 	 */
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 		
 	OpenHelper openHelper;
 
@@ -217,6 +250,9 @@ public class ApplicationDB extends ContentProvider{
 		case MEMBER:
 			count = db.delete(DBConstant.TABLE_MEMBER, where, whereArgs);
 			break;
+		case GROUPS_D:
+			count = db.delete(DBConstant.TABLE_GROUP_D, where, whereArgs);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -239,6 +275,8 @@ public class ApplicationDB extends ContentProvider{
 			return DBConstant.City_Columns.CONTENT_TYPE;
 		case MEMBER:
 			return DBConstant.Member_Columns.CONTENT_TYPE;
+		case GROUPS_D:
+			return DBConstant.GroupDistinct_Columns.CONTENT_TYPE;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -251,7 +289,8 @@ public class ApplicationDB extends ContentProvider{
 		if (sUriMatcher.match(uri) != NOTIFICATION && sUriMatcher.match(uri) != CHAT
 				&& sUriMatcher.match(uri) != GROUPS
 				&& sUriMatcher.match(uri) != CITY
-				&& sUriMatcher.match(uri) != MEMBER) 
+				&& sUriMatcher.match(uri) != MEMBER
+				&& sUriMatcher.match(uri)!= GROUPS_D) 
 		{ 
 			throw new IllegalArgumentException("Unknown URI " + uri); 
 		}
@@ -314,6 +353,15 @@ public class ApplicationDB extends ContentProvider{
 					return noteUri;
 				}
 				break;
+			case GROUPS_D:
+				 rowId = db.insertWithOnConflict(DBConstant.TABLE_GROUP_D, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+				if (rowId > 0) 
+				{
+					Uri noteUri = ContentUris.withAppendedId(DBConstant.GroupDistinct_Columns.CONTENT_URI, rowId);
+					getContext().getContentResolver().notifyChange(noteUri, null);
+					return noteUri;
+				}
+				break;
 				
 			default:
 				throw new IllegalArgumentException("Unknown URI " + uri);
@@ -356,17 +404,27 @@ public class ApplicationDB extends ContentProvider{
 			qb.setTables(DBConstant.TABLE_MEMBER);
 			qb.setProjectionMap(memberProjectionMap);
 			break;
+		case GROUPS_D:
+			qb.setTables(DBConstant.TABLE_GROUP_D);
+			qb.setProjectionMap(groupDistinctProjectionMap);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
 //		SQLiteDatabase db = openHelper.getReadableDatabase();
 		SQLiteDatabase db = openHelper.getWritableDatabase();
-		Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+//		Cursor c;
+//		if(sUriMatcher.match(uri) == GROUPS_D){
+		Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);	
+//		}else{
+//			String distinctQuery = SQLiteQueryBuilder.buildQueryString(true, DBConstant.TABLE_GROUPS, new String[]{DBConstant.Group_Columns.COLUMN_GROUP_ID_MYSQl}, null, null, null, null, null);
+//			c = db.rawQuery(distinctQuery, null);
+//		}
 		c.setNotificationUri(getContext().getContentResolver(), uri);
 		return c;
 	}
-
-
+	
+	
 	@Override
 	public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
 		// TODO Auto-generated method stub
@@ -388,6 +446,9 @@ public class ApplicationDB extends ContentProvider{
 		case MEMBER :
 			count = db.update(DBConstant.TABLE_MEMBER, values, where, whereArgs);
 			break;
+		case GROUPS_D :
+			count = db.update(DBConstant.TABLE_GROUP_D, values, where, whereArgs);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI " + uri);
 		}
@@ -402,6 +463,7 @@ public class ApplicationDB extends ContentProvider{
 		sUriMatcher.addURI(AUTHORITY, DBConstant.TABLE_GROUPS, GROUPS);
 		sUriMatcher.addURI(AUTHORITY, DBConstant.TABLE_CITY, CITY);
 		sUriMatcher.addURI(AUTHORITY, DBConstant.TABLE_MEMBER, MEMBER);
+		sUriMatcher.addURI(AUTHORITY, DBConstant.TABLE_GROUP_D, GROUPS_D);
 
 		notificationProjectionMap = new HashMap<String, String>();
 		notificationProjectionMap.put(DBConstant.Notification_Columns.COLUMN_ID, DBConstant.Notification_Columns.COLUMN_ID);
@@ -479,5 +541,25 @@ public class ApplicationDB extends ContentProvider{
 		memberProjectionMap.put(DBConstant.Member_Columns.COLUMN_MEMBER_IS_ACTIVE, DBConstant.Member_Columns.COLUMN_MEMBER_IS_ACTIVE);
 		memberProjectionMap.put(DBConstant.Member_Columns.COLUMN_MEMBER_IMAGE, DBConstant.Member_Columns.COLUMN_MEMBER_IMAGE);
 		memberProjectionMap.put(DBConstant.Member_Columns.COLUMN_MEMBER_NAME, DBConstant.Member_Columns.COLUMN_MEMBER_NAME);
+		
+		groupDistinctProjectionMap = new HashMap<String, String>();
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_ID, DBConstant.GroupDistinct_Columns.COLUMN_ID);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_ID, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_ID);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_ID_MYSQl, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_ID_MYSQl);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_CREATED, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_CREATED);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IMAGE, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IMAGE);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IMAGE_LOCAL, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IMAGE_LOCAL);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_JABBER_ID, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_JABBER_ID);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_CITY_ID, DBConstant.GroupDistinct_Columns.COLUMN_CITY_ID);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_ACTIVE, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_ACTIVE);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_NAME, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_NAME);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_ADMIN, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_ADMIN);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_JOIN, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_JOIN);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_READ, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_READ);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_UNREAD, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_IS_UNREAD);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_UNREAD_COUNTER, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_UNREAD_COUNTER);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_LAST_MSG, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_LAST_MSG);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_LAST_PING, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_LAST_PING);
+		groupDistinctProjectionMap.put(DBConstant.GroupDistinct_Columns.COLUMN_GROUP_MEMBERS, DBConstant.GroupDistinct_Columns.COLUMN_GROUP_MEMBERS);
 		}
 }

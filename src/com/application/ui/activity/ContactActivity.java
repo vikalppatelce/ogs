@@ -5,12 +5,15 @@ package com.application.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.telephony.TelephonyManager;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
@@ -18,7 +21,7 @@ import android.widget.TextView;
 import com.application.ui.view.Crouton;
 import com.application.ui.view.Style;
 import com.application.utils.BuildVars;
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.flurry.android.FlurryAgent;
 
 /**
@@ -42,6 +45,7 @@ public class ContactActivity extends ActionBarActivity {
 
 	private void initUi() {
 		mContactTv = (TextView)findViewById(R.id.contactlayout);
+		mContactTv.setText(Html.fromHtml(getResources().getString(R.string.str_activity_registration_contact)));
 	}
 	
 	private void hideActionBar(){
@@ -74,7 +78,9 @@ public class ContactActivity extends ActionBarActivity {
 			@Override
 			public void onClick(View view) {
 				// TODO Auto-generated method stub
-				
+				Uri number = Uri.parse("tel:+919867944455");
+		        Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+		        startActivity(callIntent);	
 			}
 		});
 	}
@@ -99,6 +105,14 @@ public class ContactActivity extends ActionBarActivity {
 			Crouton.makeText(ContactActivity.this, "Your number ain't store in SIM card!", Style.CONFIRM).show();
 		}
 		
+	}
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            return true;
+	    }
+	    return super.onKeyDown(keycode, e);
 	}
 	
 	/*

@@ -25,6 +25,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -41,7 +42,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.digitattva.ttogs.R;
+import com.chat.ttogs.R;
 import com.flurry.android.FlurryAgent;
 import com.application.ui.view.CountryAdapter;
 import com.application.ui.view.CountryAdapter.Country;
@@ -345,6 +346,7 @@ public class RegistrationGroupSelectActivity extends ActionBarActivity {
 				// TODO Auto-generated method stub
 				if (!TextUtils.isEmpty(mEditText.toString().toLowerCase())) {
 					searchListViewAdapter.search(mEditText.toString());
+					searching = true;
 					searchWas = true;
 					listView.setAdapter(searchListViewAdapter);
 
@@ -428,7 +430,7 @@ public class RegistrationGroupSelectActivity extends ActionBarActivity {
 					mIsSuccess = mJSONObject.getBoolean("success");
 					if(mIsSuccess){
 						JSONObject mJSONObjectInner = mJSONObject.getJSONObject("data");
-						JSONArray mJSONArray = mJSONObjectInner.getJSONArray("cities");
+						JSONArray mJSONArray = mJSONObjectInner.getJSONArray("groups");
 						if (mJSONArray.length() > 0) {
 							mIsCityData = true;
 						}	
@@ -473,6 +475,14 @@ public class RegistrationGroupSelectActivity extends ActionBarActivity {
 			}
 		});
 
+	}
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            return true;
+	    }
+	    return super.onKeyDown(keycode, e);
 	}
 	
 	/*
